@@ -1,0 +1,18 @@
+{
+  "name": "siya-first-birthday",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Siya's First Birthday — an interactive digital invitation",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "gsap": "^3.13.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
+  }
+}

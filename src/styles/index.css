@@ -1,0 +1,11 @@
+/* ============================================================
+   Stylesheet entry point — linked from index.html.
+   Loaded by the browser directly so the invitation is styled
+   even when JavaScript is disabled, blocked or still loading.
+   ============================================================ */
+
+@import "./tokens.css";
+@import "./base.css";
+@import "./intro.css";
+@import "./sections.css";
+@import "./responsive.css";

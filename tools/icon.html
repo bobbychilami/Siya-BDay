@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Touch icon</title>
+<style>
+  @font-face { font-family: "Pinyon Script"; src: url("/fonts/pinyon-400.woff2") format("woff2"); font-display: block; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 180px; height: 180px; overflow: hidden; }
+  .icon {
+    width: 180px;
+    height: 180px;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(ellipse 80% 70% at 50% 0%, rgba(216, 183, 123, 0.32), transparent 66%),
+      linear-gradient(158deg, #6e2234 0%, #4a1220 55%, #330a16 100%);
+  }
+  .icon span {
+    font-family: "Pinyon Script", cursive;
+    font-size: 132px;
+    line-height: 1;
+    color: #f0dcb4;
+    transform: translateY(-4px);
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+  }
+</style>
+</head>
+<body>
+  <div class="icon"><span>S</span></div>
+</body>
+</html>

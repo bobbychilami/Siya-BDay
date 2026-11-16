@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Art preview</title>
+<style>
+  body{margin:0;background:#F4E1DF;font-family:system-ui;padding:20px}
+  .row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+  .box{background:#FFF8F1;padding:8px;border-radius:6px;box-shadow:0 6px 20px rgba(90,23,40,.12)}
+  svg.preview{width:220px;height:220px;display:block}
+  svg.small{width:120px;height:120px}
+  .dark{background:#4E1220}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script type="module">
+import { SPRITE } from '../src/js/art.generated.js';
+document.body.insertAdjacentHTML('afterbegin', SPRITE);
+const out = document.getElementById('out');
+out.innerHTML = `
+<div class="row">
+  <div class="box"><svg class="preview"><use href="#bouquet-a"/></svg></div>
+  <div class="box"><svg class="preview"><use href="#bouquet-b"/></svg></div>
+  <div class="box"><svg class="preview"><use href="#bouquet-c"/></svg></div>
+</div>
+<div class="row" style="margin-top:16px">
+  <div class="box"><svg class="preview"><use href="#peony-blush"/></svg></div>
+  <div class="box"><svg class="preview"><use href="#peony-rose"/></svg></div>
+  <div class="box"><svg class="preview"><use href="#peony-wine"/></svg></div>
+  <div class="box"><svg class="preview"><use href="#peony-ivory"/></svg></div>
+</div>
+<div class="row" style="margin-top:16px">
+  <div class="box"><svg class="small" viewBox="0 0 240 34"><use href="#flourish"/></svg></div>
+</div>
+<div class="row" style="margin-top:16px">
+  <div class="box dark" style="width:280px;height:180px;position:relative">
+    <svg style="position:absolute;inset:0;width:100%;height:100%"><rect width="100%" height="100%" fill="url(#damask)"/></svg>
+    <svg style="position:relative;width:60px;height:60px;margin:60px" viewBox="0 0 120 120"><path fill="#D8B77B" d="${(await import('../src/js/art.generated.js')).EXTRA.sealBlob}"/></svg>
+  </div>
+</div>`;
+</script>
+</body>
+</html>

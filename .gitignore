@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Local screenshot QA output
+shots/
+
+# Large reference media (kept locally, not part of the site)
+reference/
+
+# Logs and OS noise
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor / tooling
+.vscode/
+.idea/
+.freebuff/
+
+# Local environment overrides
+.env
+.env.*
+!.env.example

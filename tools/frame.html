@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Device frame</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; background: #191215; }
+  body { display: flex; justify-content: center; align-items: flex-start; padding: 0; }
+  iframe { border: 0; display: block; background: #fff8f1; }
+</style>
+</head>
+<body>
+<script>
+  const q = new URLSearchParams(location.search);
+  const w = Number(q.get("w") || 390);
+  const h = Number(q.get("h") || 844);
+  const url = q.get("url") || "/";
+  const frame = document.createElement("iframe");
+  frame.width = w;
+  frame.height = h;
+  frame.src = url;
+  frame.style.width = w + "px";
+  frame.style.height = h + "px";
+  document.body.appendChild(frame);
+</script>
+</body>
+</html>

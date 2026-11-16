@@ -1,0 +1,89 @@
+/* ============================================================
+   Design tokens — type, colour, rhythm
+   ============================================================ */
+
+@font-face {
+  font-family: "Pinyon Script";
+  src: url("/fonts/pinyon-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+2018-201D, U+2026, U+00B7;
+}
+@font-face {
+  font-family: "Italianno";
+  src: url("/fonts/italianno-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+2018-201D, U+2026, U+00B7;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant-300.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+2018-201D, U+2026, U+00B7;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+2018-201D, U+2026, U+00B7;
+}
+@font-face {
+  font-family: "DM Sans";
+  src: url("/fonts/dmsans-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Sans";
+  src: url("/fonts/dmsans-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* colour */
+  --burgundy: #5a1728;
+  --burgundy-deep: #3e0f1c;
+  --wine: #6e1f30;
+  --blush: #f4e1df;
+  --blush-deep: #ebcfc9;
+  --blush-soft: #f8ece8;
+  --ivory: #fff8f1;
+  --ivory-warm: #fbf0e2;
+  --gold: #d8b77b;
+  --gold-deep: #b08a4f;
+  --gold-light: #f0dcb4;
+  --rose: #c98f96;
+  --brown: #80665f;
+  --body-ink: #6b4f49;
+  --ink: #4a2a2c;
+
+  --line-gold: rgba(216, 183, 123, 0.55);
+  --line-gold-soft: rgba(216, 183, 123, 0.32);
+
+  /* type */
+  --font-script: "Pinyon Script", "Segoe Script", cursive;
+  --font-hand: "Italianno", "Segoe Script", cursive;
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-body: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* motion */
+  --ease-silk: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-unfold: cubic-bezier(0.55, 0.02, 0.3, 1);
+  --dur-reveal: 0.85s;
+
+  /* layout */
+  --site-w: 470px;
+  --pad: clamp(22px, 6.2vw, 40px);
+  --shadow-soft: 0 24px 48px -28px rgba(74, 20, 30, 0.45);
+  --shadow-card: 0 30px 70px -34px rgba(74, 20, 30, 0.5);
+}
