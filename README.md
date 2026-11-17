@@ -106,12 +106,26 @@ node tools/shoot.mjs --url="http://localhost:5199/tools/icon.html" --w=180 --h=1
 
 ## Deployment
 
-The site is served by **GitHub Pages** from the `main` branch through the workflow in
+The site is served by **GitHub Pages** from a **GitHub Actions** workflow in
 `.github/workflows/deploy.yml`: every push to `main` (or a manual *Run workflow*) installs with
 `npm ci`, builds with `npm run build` and publishes `dist/` as a Pages artifact.
 
 - Public URL: https://bobbychilami.github.io/Siya-BDay/
-- Pages source must be **GitHub Actions** (Settings → Pages → Build and deployment → Source).
+- Pages source must be **GitHub Actions** (Settings → Pages → Build and deployment → Source → GitHub Actions).
+
+### First-time enablement (once)
+
+If the repository was previously published with the legacy branch *Deploy from a branch* source,
+the Actions workflow can fail at the *Configure Pages* step because the two sources conflict. To
+switch:
+
+1. Go to **Settings → Pages → Build and deployment → Source**.
+2. Select **GitHub Actions** and save.
+3. Push (or re-run) `.github/workflows/deploy.yml`; the workflow now owns the Pages publishing.
+
+Do not use the legacy branch source for this project — that mode publishes the raw repository
+tree (including `src/`), so `/src/main.js` and `/src/styles/index.css` resolve to the domain root
+and 404, leaving the page unstyled.
 
 Because the site is a project page, all asset URLs are prefixed with `/Siya-BDay/` by
 `vite.config.js`. If the repository is ever renamed, update `base` in `vite.config.js`, the

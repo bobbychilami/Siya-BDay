@@ -30,18 +30,55 @@
        script is disabled, blocked or fails to load. -->
   <link rel="stylesheet" href="/src/styles/index.css" />
 
-  <noscript>
-    <style>
-      /* No JS: show the invitation card as a plain, static page. */
-      .stage { position: static !important; display: block !important; inset: auto !important; padding: 0 !important; perspective: none !important; }
-      .env-float, .env-tap-hint, .bloom, .dust, .skip-open, .butterfly-slot, .torn, .scroll-hint { display: none !important; }
-      .cover { height: auto !important; min-height: 0 !important; padding: 0 !important; overflow: visible !important; }
-      .invite { position: relative !important; inset: auto !important; width: 100% !important; opacity: 1 !important; transform: none !important; }
-      .invite__inner { min-height: 0 !important; padding: 64px 32px 40px !important; }
-      .rsvp-panel { display: none !important; }
-      .noscript-note { margin-top: 18px; font-size: 12px; color: #80665F; text-align: center; }
-    </style>
-  </noscript>
+  <script>
+    /*
+      Fail-safe watchdog.
+      The stylesheet is linked (not imported from JS), so the invitation is
+      styled even when this module is blocked or fails to load. But the cover
+      animation keeps `.invite` invisible until JS signals readiness, so if the
+      module never loads the card would stay hidden. This synchronous inline
+      script reverts that: if the app never sets dataset.appReady within 9 s,
+      or if any module script on the page errors, we remove the `js` class so
+      the no-JS static fallback in index.css paints the readable invitation.
+    */
+    (function () {
+      var root = document.documentElement;
+      var handled = false;
+
+      function revert() {
+        if (handled) return;
+        handled = true;
+        root.classList.remove("js");
+        root.classList.add("no-js");
+      }
+
+      // The app signals readiness once it has booted: from then on the
+      // animation owns the reveal, so never fall back.
+      if (root.addEventListener) {
+        root.addEventListener(
+          "app-ready",
+          function () {
+            handled = true;
+          },
+          { once: true }
+        );
+      }
+
+      // Hard timeout so a hung or broken module never leaves the card hidden.
+      window.setTimeout(revert, 9000);
+
+      // If any script on the page fails to load, revert immediately.
+      if (window.addEventListener) {
+        window.addEventListener(
+          "error",
+          function (e) {
+            if (e && e.target && e.target.tagName === "SCRIPT") revert();
+          },
+          true
+        );
+      }
+    })();
+  </script>
 
   <script type="module" src="/src/main.js"></script>
 </head>

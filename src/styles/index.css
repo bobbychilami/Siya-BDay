@@ -9,3 +9,34 @@
 @import "./intro.css";
 @import "./sections.css";
 @import "./responsive.css";
+
+/* ============================================================
+   No-JS / JS-failed static fallback
+   ============================================================
+   The page sets <html class="js"> once main.js boots. If that never
+   happens (blocked/failed module, slow network, error), the rules
+   below — matched with :not(.js) — reveal the invitation card as a
+   plain, readable static page. The same rules also apply to the
+   explicit <html class="no-js"> path used by the inline watchdog.
+   ============================================================ */
+
+/* Reveal the invitation card itself. */
+html:not(.js) .invite,
+html.no-js .invite {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Keep the countdown digits legible without JS. */
+html:not(.js) .countdown__digit,
+html.no-js .countdown__digit {
+  opacity: 1 !important;
+}
+
+/* Reveal the RSVP note so guests can reply to the family. */
+html:not(.js) .rsvp__aside,
+html.no-js .rsvp__aside,
+html:not(.js) noscript,
+html.no-js noscript {
+  display: block !important;
+}

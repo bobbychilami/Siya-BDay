@@ -48,12 +48,42 @@ export function initIntro({ reduceMotion = false, onSettled } = {}) {
     if (settled) return;
     settled = true;
     opened = true;
+    window.clearTimeout(settleTimer);
     cover.classList.add("is-settled");
     invite.setAttribute("aria-hidden", "false");
     unlock();
     rememberSeen(true);
     dust.start();
     onSettled?.();
+  }
+
+  // Safety net: if the intro timeline never reaches a settled state
+  // (timeline error, missing DOM, interrupted play), reveal the card so
+  // the visitor is not left looking at a blank cover.
+  let settleTimer = 0;
+  function armSettleWatchdog() {
+    window.clearTimeout(settleTimer);
+    settleTimer = window.setTimeout(() => {
+      if (!settled && cover) {
+        // Reveal the card without the envelope animation.
+        const f = document.querySelector(".env-float");
+        if (f) f.style.pointerEvents = "none";
+        gsap.set(f, { autoAlpha: 0 });
+        gsap.set(invite, { opacity: 1, y: 0, scale: 1 });
+        gsap.set(document.getElementById("inviteFrame"), { clipPath: "inset(0% 0% 0% 0%)" });
+        gsap.set("#bloom, .env-glow", { opacity: 0 });
+        invite.setAttribute("aria-hidden", "false");
+        cover.classList.add("is-settled");
+        unlock();
+        settled = true;
+        opened = true;
+        dust.start();
+        onSettled?.();
+      }
+    }, 9000);
+  }
+  function clearSettleWatchdog() {
+    window.clearTimeout(settleTimer);
   }
 
   function open({ instant = false } = {}) {
@@ -65,10 +95,12 @@ export function initIntro({ reduceMotion = false, onSettled } = {}) {
     if (instant) {
       settleInstantly({ fade: 0.4 });
       settle();
+      clearSettleWatchdog();
       return;
     }
 
     dust.start();
+    armSettleWatchdog();
     if (!tl) {
       tl = buildIntroTimeline({
         onIgnite: () => {
@@ -79,7 +111,12 @@ export function initIntro({ reduceMotion = false, onSettled } = {}) {
       });
       if (import.meta.env.DEV) window.__introTl = tl;
     }
-    tl.play(0);
+    try {
+      tl.play(0);
+    } catch (err) {
+      console.warn("[Siya] intro timeline failed; revealing the card.", err);
+      settle();
+    }
   }
 
   function resetForReplay() {

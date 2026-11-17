@@ -484,8 +484,75 @@
   z-index: 3;
   display: flex;
   flex-direction: column;
+  /* Hidden until JS opens the envelope. With JS disabled/blocked the
+     no-JS fallback in index.css reverts this to a visible, readable card. */
   opacity: 0;
   will-change: transform, opacity;
+}
+
+/* No-JS / JS-failed static fallback: show the invitation card as a plain
+   readable page. This is the safety net when the module never loads. */
+html:not(.js) .stage,
+html.no-js .stage {
+  position: static !important;
+  display: block !important;
+  inset: auto !important;
+  padding: 0 !important;
+  perspective: none !important;
+}
+html:not(.js) .env-float,
+html.no-js .env-float,
+html:not(.js) .env-tap-hint,
+html.no-js .env-tap-hint,
+html:not(.js) .bloom,
+html.no-js .bloom,
+html:not(.js) .dust,
+html.no-js .dust,
+html:not(.js) .skip-open,
+html.no-js .skip-open,
+html:not(.js) .butterfly-slot,
+html.no-js .butterfly-slot,
+html:not(.js) .scroll-hint,
+html.no-js .scroll-hint {
+  display: none !important;
+}
+html:not(.js) .cover,
+html.no-js .cover {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+html:not(.js) .invite,
+html.no-js .invite {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+html:not(.js) .invite__inner,
+html.no-js .invite__inner {
+  min-height: 0 !important;
+  padding: 64px 32px 40px !important;
+}
+html:not(.js) .rsvp-panel,
+html.no-js .rsvp-panel {
+  display: none !important;
+}
+html:not(.js) .noscript-note,
+html.no-js .noscript-note {
+  display: block !important;
+  margin-top: 18px;
+  font-size: 12px;
+  color: #80665f;
+  text-align: center;
+}
+
+/* Keep the count-down visible without JS so guests still see the date. */
+html:not(.js) .countdown__digit,
+html.no-js .countdown__digit {
+  opacity: 1 !important;
 }
 
 .invite__paper {
