@@ -1,28 +1,28 @@
-/* Injects the original SVG artwork into the document. */
-import { SPRITE, EXTRA } from "./art.generated.js";
+/* Injects the original painted SVG artwork into the document. */
+import { SPRITE, EXTRA } from "./coast.generated.js";
 import { MAPS_URL } from "../config.js";
 
-export function mountArt() {
-  // sprite with all botanical symbols + gradients
-  document.body.insertAdjacentHTML("afterbegin", SPRITE);
+const BUTTERFLY = {
+  blush: EXTRA.butterflyBlush,
+  rose: EXTRA.butterflyBlush,
+  sea: EXTRA.butterflySea,
+  gold: EXTRA.butterflyLemon,
+  lemon: EXTRA.butterflyLemon,
+};
 
-  // wax seal outlines (smooth, organic blobs)
-  document.querySelectorAll(".seal__path, .rsvp-seal__path").forEach((path) => {
-    path.setAttribute("d", EXTRA.sealBlob);
-  });
+export function mountArt() {
+  // one sprite holds the gradients, filters and every painted symbol
+  document.body.insertAdjacentHTML("afterbegin", SPRITE);
 
   // deckled paper edges
   document.querySelectorAll(".torn").forEach((el, i) => {
-    el.innerHTML = i === 0 ? EXTRA.torn : EXTRA.tornAlt;
+    el.innerHTML = i % 2 === 0 ? EXTRA.torn : EXTRA.tornAlt;
   });
 
   // butterflies
   document.querySelectorAll(".butterfly-slot").forEach((slot) => {
-    const tint = slot.dataset.butterfly || "rose";
-    slot.insertAdjacentHTML(
-      "afterbegin",
-      tint === "gold" ? EXTRA.butterflyGold : tint === "wine" ? EXTRA.butterflyWine : EXTRA.butterflyRose
-    );
+    const tint = BUTTERFLY[slot.dataset.butterfly] || EXTRA.butterflyBlush;
+    slot.insertAdjacentHTML("afterbegin", tint);
   });
 
   // ambient florals beside the column on wide screens
@@ -30,8 +30,8 @@ export function mountArt() {
   ambient.className = "page-ambient";
   ambient.setAttribute("aria-hidden", "true");
   ambient.innerHTML = `
-    <svg class="amb amb--left" viewBox="0 0 320 320"><use href="#bouquet-c" /></svg>
-    <svg class="amb amb--right" viewBox="0 0 320 320"><use href="#bouquet-b" /></svg>`;
+    <svg class="amb amb--left" viewBox="0 0 220 220"><use href="#bougainvillea" /></svg>
+    <svg class="amb amb--right" viewBox="0 0 200 200"><use href="#rose-spray" /></svg>`;
   document.body.prepend(ambient);
 
   // map link is generated from the confirmed venue (single source of truth)

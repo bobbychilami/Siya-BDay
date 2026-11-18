@@ -1,13 +1,22 @@
 /**
- * Canvas 2D dust motes.
- * - max 40 particles, DPR capped at 2
+ * Canvas 2D flower petals.
+ * - max 32 particles, DPR capped at 2
  * - paused when the cover is offscreen or the tab is hidden
  * - disabled for reduced motion
  */
 
-const MAX_PARTICLES = 40;
+const MAX_PARTICLES = 32;
+
+const PETAL_COLOURS = [
+  [242, 216, 216], // soft blush
+  [255, 249, 240], // warm ivory
+  [217, 208, 231], // dusty lavender
+  [242, 212, 123], // lemon
+  [184, 217, 229], // powder blue
+];
 
 export function createDust(canvas, { reduceMotion = false } = {}) {
+  if (!canvas) return { start() {}, stop() {}, burst() {}, destroy() {} };
   const ctx = canvas.getContext("2d", { alpha: true });
   if (!ctx) return { start() {}, stop() {}, burst() {}, destroy() {} };
 
@@ -29,13 +38,16 @@ export function createDust(canvas, { reduceMotion = false } = {}) {
   function makeParticle(seed = false) {
     return {
       x: rand(0, width),
-      y: seed ? rand(0, height) : rand(height * 0.45, height * 0.92),
-      r: rand(0.7, 2.6),
-      vy: rand(-0.22, -0.06),
-      vx: rand(-0.1, 0.1),
-      life: rand(0.35, 1),
-      twinkle: rand(0.004, 0.014),
+      y: seed ? rand(0, height) : rand(-height * 0.2, -10),
+      r: rand(2.2, 5.6),
+      vy: rand(0.16, 0.52),
+      vx: rand(-0.16, 0.16),
+      spin: rand(-0.014, 0.014),
+      angle: rand(0, Math.PI * 2),
+      sway: rand(0.5, 1.5),
       phase: rand(0, Math.PI * 2),
+      colour: PETAL_COLOURS[Math.floor(rand(0, PETAL_COLOURS.length))],
+      alpha: rand(0.32, 0.62),
     };
   }
 
@@ -47,6 +59,15 @@ export function createDust(canvas, { reduceMotion = false } = {}) {
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     particles = Array.from({ length: MAX_PARTICLES }, () => makeParticle(true));
+  }
+
+  function petalPath(r) {
+    const w = r * 1.55;
+    ctx.beginPath();
+    ctx.moveTo(0, -r);
+    ctx.bezierCurveTo(w * 0.9, -r * 0.6, w * 0.85, r * 0.6, 0, r);
+    ctx.bezierCurveTo(-w * 0.85, r * 0.6, -w * 0.9, -r * 0.6, 0, -r);
+    ctx.closePath();
   }
 
   function draw(time) {
@@ -61,29 +82,36 @@ export function createDust(canvas, { reduceMotion = false } = {}) {
     ctx.clearRect(0, 0, width, height);
 
     for (const p of particles) {
-      p.phase += p.twinkle * step;
-      p.y += (p.vy - boost * 0.55) * step;
-      p.x += (p.vx + Math.sin(p.phase) * 0.06) * step;
-      if (p.y < -12) {
-        p.y = height + 10;
-        p.x = rand(0, width);
-        p.r = rand(0.7, 2.6);
-      }
-      if (p.x < -12) p.x = width + 10;
-      if (p.x > width + 12) p.x = -10;
+      p.phase += 0.012 * p.sway * step;
+      p.angle += p.spin * step;
+      p.y += (p.vy - boost * 0.9) * step;
+      p.x += (p.vx + Math.sin(p.phase) * 0.22) * step + boost * Math.sin(p.phase) * 0.7 * step;
 
-      const alpha = p.life * (0.28 + Math.abs(Math.sin(p.phase)) * 0.5);
-      const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3.4);
-      glow.addColorStop(0, `rgba(255, 236, 196, ${Math.min(0.9, alpha)})`);
-      glow.addColorStop(0.4, `rgba(226, 185, 122, ${alpha * 0.5})`);
-      glow.addColorStop(1, "rgba(226, 185, 122, 0)");
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r * 3.4, 0, Math.PI * 2);
+      if (p.y > height + 22) {
+        p.y = -18;
+        p.x = rand(0, width);
+        p.r = rand(2.2, 5.6);
+      }
+      if (p.x < -24) p.x = width + 20;
+      if (p.x > width + 24) p.x = -20;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      petalPath(p.r);
+      const [r, g, b] = p.colour;
+      const grad = ctx.createLinearGradient(0, -p.r, 0, p.r);
+      grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${Math.min(0.95, p.alpha + 0.16)})`);
+      grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${p.alpha * 0.6})`);
+      ctx.fillStyle = grad;
       ctx.fill();
+      ctx.strokeStyle = `rgba(169, 107, 88, 0.16)`;
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+      ctx.restore();
     }
 
-    boost *= 0.985;
+    boost *= 0.982;
   }
 
   function start() {
@@ -99,23 +127,28 @@ export function createDust(canvas, { reduceMotion = false } = {}) {
     cancelAnimationFrame(raf);
   }
 
-  // brief acceleration + sparkle surge for the seal ignition
+  // a soft puff of petals as the ribbon comes undone
   function burst() {
-    if (reduceMotion) return;
-    boost = 1.6;
+    if (reduceMotion || !running) return;
+    boost = 1.8;
     for (let i = 0; i < 12; i++) {
       particles.push({
-        x: width / 2 + rand(-60, 60),
-        y: height * 0.5 + rand(-30, 40),
-        r: rand(0.8, 2.2),
-        vy: rand(-1.6, -0.7),
-        vx: rand(-0.5, 0.5),
-        life: rand(0.5, 1),
-        twinkle: rand(0.01, 0.03),
+        x: width / 2 + rand(-70, 70),
+        y: height * 0.48 + rand(-40, 40),
+        r: rand(2.4, 5.2),
+        vy: rand(-1.4, -0.4),
+        vx: rand(-0.7, 0.7),
+        spin: rand(-0.02, 0.02),
+        angle: rand(0, Math.PI * 2),
+        sway: rand(0.6, 1.4),
         phase: rand(0, Math.PI),
+        colour: PETAL_COLOURS[Math.floor(rand(0, PETAL_COLOURS.length))],
+        alpha: rand(0.4, 0.7),
       });
     }
-    if (particles.length > MAX_PARTICLES + 14) particles.splice(0, particles.length - (MAX_PARTICLES + 14));
+    if (particles.length > MAX_PARTICLES + 12) {
+      particles.splice(0, particles.length - (MAX_PARTICLES + 12));
+    }
   }
 
   const io = new IntersectionObserver(

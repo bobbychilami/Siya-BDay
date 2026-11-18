@@ -10,6 +10,13 @@ Hosted by Bobby Chilami and Snehal Chilami.
 Vanilla HTML5, CSS3 and ES modules on Vite, animated with GSAP + ScrollTrigger.
 All botanical artwork is original generated SVG; the dust motes are Canvas 2D.
 
+> **This branch — `experiment/italian-coast-birthday` — is an alternative art direction, not the
+> published invitation.** It re-imagines the same event as a hand-painted Italian-Riviera
+> stationery set: a portrait envelope tied with a satin ribbon, a watercolour coast inside an
+> arched cameo, and powder blue / blush / lemon paper. `main` still holds the approved version and
+> this branch is not merged or deployed. Event facts, the RSVP flow and the deployment setup are
+> identical to `main`; only the visual and motion layer differs.
+
 ## Commands
 
 ```bash
@@ -30,10 +37,10 @@ npm run preview -- --port 5200  # serve dist/ the way Pages does
 index.html                 markup, metadata, no-JS fallback
 src/main.js                boot: art, countdown, scroll, intro, rsvp, share, a11y
 src/config.js              event facts, WhatsApp number, site URL, storage keys
-src/js/envelope.js         master GSAP opening timeline (ignite → unfold → rise → settle)
+src/js/envelope.js         master GSAP opening timeline (untie → unfold → rise → settle)
 src/js/intro.js            session state, scroll lock, skip, replay
-src/js/art.js              injects the SVG sprite and butterflies
-src/js/art.generated.js    generated sprite (see tools/gen-art.mjs)
+src/js/art.js              injects the SVG sprite, torn edges, butterflies, ambient sprays
+src/js/coast.generated.js  generated sprite (see tools/gen-coast.mjs)
 src/js/countdown.js        countdown to the IST start time
 src/js/rsvp.js             RSVP validation, preview mode, WhatsApp URL, copy
 src/js/share.js            Web Share with clipboard fallback
@@ -41,9 +48,9 @@ src/js/particles.js        canvas dust motes
 src/js/scroll.js           ScrollTrigger reveals and parallax
 src/js/accessibility.js    reduce-motion toggle, persisted locally
 src/styles/index.css       stylesheet entry (linked from index.html)
-src/styles/*.css           tokens, base, intro/cover, sections, responsive
+src/styles/*.css           tokens, base, intro/cover+envelope, sections, responsive
 public/                    fonts (+ OFL licences), favicon, touch icon, og-image, robots.txt, _headers
-tools/                     art generator, headless Chrome screenshot harness, icon/OG templates
+tools/                     coast-painting generator, screenshot harness, OG/icon templates
 ```
 
 Stylesheets are linked from `index.html` (not imported from JS) so the invitation is fully
@@ -70,31 +77,42 @@ and `SITE_URL` in one pass, then regenerate the OG image if the wording changes.
 
 ```bash
 node tools/shoot.mjs --w=390 --h=844 --out=shots/cover.png
-node tools/shoot.mjs --w=390 --h=844 --click="#skipOpen" --scroll=3340 --out=shots/rsvp.png
+node tools/shoot.mjs --w=390 --h=844 --click="#skipOpen" --scroll=3461 --out=shots/rsvp.png
 node tools/shoot.mjs --w=1440 --h=900 --dpr=1 --out=shots/desktop.png
 node tools/shoot.mjs --nojs --out=shots/no-js.png          # JavaScript disabled
 node tools/shoot.mjs --reduced --out=shots/reduced.png     # prefers-reduced-motion
-node tools/shoot.mjs --focus="#seal" --key=Enter           # keyboard activation
+node tools/shoot.mjs --focus="#bow" --key=Enter            # keyboard activation
 node tools/shoot.mjs --click="#skipOpen" --reload          # session persistence
 node tools/shoot.mjs --js="…" --eval="…"                   # scriptable checks
 ```
 
+To freeze the opening for a still, click the bow and pause the exposed timeline:
+
+```bash
+node tools/shoot.mjs --click="#bow" --js="window.__introTl.pause(2.8); 1" --out=shots/probe.png --settle=1200
+```
+
+`window.__introTl` exists only in the dev build.
+
 It reports console errors/warnings and page metrics (`scrollWidth` vs `innerWidth`) as JSON.
 `--jpeg` captures JPEG instead of PNG, which is how `public/og-image.jpg` was produced from
-`tools/og-card.html`.
+`tools/og.html`.
 
 ## Regenerating artwork and social images
 
 ```bash
-node tools/gen-art.mjs     # rewrites src/js/art.generated.js
+node tools/gen-coast.mjs     # rewrites src/js/coast.generated.js
 ```
 
 With the dev server running:
 
 ```bash
-node tools/shoot.mjs --url="http://localhost:5199/tools/og-card.html" --w=1200 --h=630 --dpr=1 --jpeg --quality=90 --out=public/og-image.jpg
-node tools/shoot.mjs --url="http://localhost:5199/tools/icon.html" --w=180 --h=180 --dpr=1 --out=public/apple-touch-icon.png
+node tools/shoot.mjs --url="http://localhost:5199/Siya-BDay/tools/og.html" --w=1200 --h=630 --dpr=1 --jpeg --quality=90 --out=public/og-image.jpg
+node tools/shoot.mjs --url="http://localhost:5199/Siya-BDay/tools/icon.html" --w=180 --h=180 --dpr=1 --out=public/apple-touch-icon.png
 ```
+
+The venue picture is an **illustrated impression** of a garden celebration, labelled as such on
+the page; it is not a photograph or a claim about how Hotel Raviraj looks.
 
 ## Accessibility
 

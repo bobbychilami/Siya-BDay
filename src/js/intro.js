@@ -1,6 +1,5 @@
-import gsap from "gsap";
 import { SESSION_KEY } from "../config.js";
-import { buildIntroTimeline, settleInstantly } from "./envelope.js";
+import { buildIntroTimeline, primeIntroStage, settleInstantly } from "./envelope.js";
 import { createDust } from "./particles.js";
 
 /**
@@ -8,7 +7,7 @@ import { createDust } from "./particles.js";
  */
 export function initIntro({ reduceMotion = false, onSettled } = {}) {
   const cover = document.getElementById("cover");
-  const seal = document.getElementById("seal");
+  const bow = document.getElementById("bow");
   const envelope = document.getElementById("envelope");
   const invite = document.getElementById("invite");
   const skipBtn = document.getElementById("skipOpen");
@@ -65,20 +64,8 @@ export function initIntro({ reduceMotion = false, onSettled } = {}) {
     window.clearTimeout(settleTimer);
     settleTimer = window.setTimeout(() => {
       if (!settled && cover) {
-        // Reveal the card without the envelope animation.
-        const f = document.querySelector(".env-float");
-        if (f) f.style.pointerEvents = "none";
-        gsap.set(f, { autoAlpha: 0 });
-        gsap.set(invite, { opacity: 1, y: 0, scale: 1 });
-        gsap.set(document.getElementById("inviteFrame"), { clipPath: "inset(0% 0% 0% 0%)" });
-        gsap.set("#bloom, .env-glow", { opacity: 0 });
-        invite.setAttribute("aria-hidden", "false");
-        cover.classList.add("is-settled");
-        unlock();
-        settled = true;
-        opened = true;
-        dust.start();
-        onSettled?.();
+        settleInstantly({ fade: 0.35 });
+        settle();
       }
     }, 9000);
   }
@@ -120,30 +107,30 @@ export function initIntro({ reduceMotion = false, onSettled } = {}) {
   }
 
   function resetForReplay() {
-    const envFloat = document.querySelector(".env-float");
     opened = false;
     settled = false;
     cover.classList.remove("is-settled", "is-opening");
     invite.setAttribute("aria-hidden", "true");
     skipBtn?.removeAttribute("disabled");
-    gsap.set(envFloat, { autoAlpha: 1, opacity: 1, y: 0, scale: 1, pointerEvents: "auto" });
-    gsap.set(invite, { opacity: 0, y: 88, scale: 0.905 });
-    gsap.set("#seal", { opacity: 1, scale: 1, y: 0, rotate: 0 });
-    gsap.set("#envCard", { yPercent: 0 });
-    gsap.set("#envFlap", { rotateX: 0 });
-    gsap.set("#inviteFrame", { clipPath: "inset(100% 0% 0% 0%)" });
-    gsap.set(".invite__corner, .invite__sprig, .invite .cover__top, .invite .name, .invite .cover__sunshine, .invite .cover__copy, .invite .cover__date, .invite .scroll-hint", {
-      clearProps: "opacity,transform",
-    });
+    primeIntroStage();
     window.scrollTo(0, 0);
     lock();
+    dust.start();
     // let the reset paint before the timeline starts
     requestAnimationFrame(() => open());
   }
 
-  seal?.addEventListener("click", () => open());
+  bow?.addEventListener("click", () => open());
   envelope?.addEventListener("click", (event) => {
-    if (event.target.closest("#seal")) return;
+    if (event.target.closest("#bow")) return;
+    open();
+  });
+  // Tapping anywhere on the painted cover opens it, including the paper
+  // around the envelope. open() is idempotent, so the bow/envelope handlers
+  // firing first simply make this a no-op, and the skip button still takes
+  // its own instant path because it runs before the event bubbles here.
+  cover?.addEventListener("click", (event) => {
+    if (event.target.closest("#skipOpen")) return;
     open();
   });
   skipBtn?.addEventListener("click", () => open({ instant: true }));
@@ -152,8 +139,9 @@ export function initIntro({ reduceMotion = false, onSettled } = {}) {
     resetForReplay();
   });
 
-  // keyboard: Enter/Space on the envelope itself
-  envelope?.setAttribute("tabindex", "-1");
+  // keyboard: Enter/Space land on the bow button natively; the envelope
+  // itself is a pointer affordance only.
+  envelope?.setAttribute("aria-hidden", "false");
 
   const seen = readSeen();
   if (reduceMotion || seen) {
@@ -162,6 +150,8 @@ export function initIntro({ reduceMotion = false, onSettled } = {}) {
     requestAnimationFrame(() => open({ instant: true }));
   } else {
     lock();
+    // petals drift while the envelope waits to be opened
+    dust.start();
   }
 
   return {

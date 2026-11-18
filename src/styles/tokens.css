@@ -1,6 +1,9 @@
 /* ============================================================
-   Design tokens — type, colour, rhythm
+   Design tokens — Siya's Little Mediterranean Garden
    ============================================================ */
+
+/* Type sources
+   All four families are self-hosted, subset woff2 files in /public/fonts. */
 
 @font-face {
   font-family: "Pinyon Script";
@@ -50,25 +53,44 @@
 }
 
 :root {
-  /* colour */
-  --burgundy: #5a1728;
-  --burgundy-deep: #3e0f1c;
-  --wine: #6e1f30;
-  --blush: #f4e1df;
-  --blush-deep: #ebcfc9;
-  --blush-soft: #f8ece8;
-  --ivory: #fff8f1;
-  --ivory-warm: #fbf0e2;
-  --gold: #d8b77b;
-  --gold-deep: #b08a4f;
-  --gold-light: #f0dcb4;
-  --rose: #c98f96;
-  --brown: #80665f;
-  --body-ink: #6b4f49;
-  --ink: #4a2a2c;
+  /* ---- the eight colours of the collection ---- */
+  --powder: #b8d9e5;
+  --sea: #6d9daf;
+  --lavender: #d9d0e7;
+  --blush: #f2d8d8;
+  --ivory: #fff9f0;
+  --sage: #a8b59b;
+  --lemon: #f2d47b;
+  --terra: #c98c78;
 
-  --line-gold: rgba(216, 183, 123, 0.55);
-  --line-gold-soft: rgba(216, 183, 123, 0.32);
+  /* ---- working tints ---- */
+  --paper: #f8f1ea;
+  --paper-warm: #fbf3e9;
+  --paper-lav: #f3eef6;
+  --lavender-light: #ece5f2;
+  --lavender-deep: #8d7ca6;
+  --sea-soft: #dcecf2;
+  --sea-mid: #8fbdd0;
+  --sea-deep: #5e8ea3;
+  --sea-ink: #3f6b7c;
+  --blush-soft: #f9ecea;
+  --rose: #d98fa0;
+  --rose-deep: #b4667a;
+  --leaf: #8c9a5b;
+  --leaf-deep: #6e7c45;
+  --lemon-deep: #d9ae45;
+  --terra-deep: #a96b58;
+  --gold: #b99a6b;
+
+  --ink: #4c4654;
+  --ink-soft: #6b6373;
+  --ink-muted: #8d8597;
+
+  --line-gold: rgba(185, 154, 107, 0.5);
+  --line-gold-soft: rgba(185, 154, 107, 0.28);
+
+  /* paper grain, used as a soft overlay */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 
   /* type */
   --font-script: "Pinyon Script", "Segoe Script", cursive;
@@ -82,8 +104,8 @@
   --dur-reveal: 0.85s;
 
   /* layout */
-  --site-w: 470px;
-  --pad: clamp(22px, 6.2vw, 40px);
-  --shadow-soft: 0 24px 48px -28px rgba(74, 20, 30, 0.45);
-  --shadow-card: 0 30px 70px -34px rgba(74, 20, 30, 0.5);
+  --site-w: 480px;
+  --pad: clamp(22px, 6.4vw, 42px);
+  --shadow-soft: 0 24px 48px -28px rgba(63, 107, 124, 0.34);
+  --shadow-card: 0 30px 70px -36px rgba(63, 107, 124, 0.42);
 }

@@ -63,14 +63,14 @@ export function initScroll({ reduceMotion = false } = {}) {
       );
     }
 
-    // closing monogram drift
-    const mono = document.querySelector(".closing__monogram .monogram");
-    if (mono) {
+    // the painted garden drifts gently behind the closing words
+    const closingArt = document.querySelector(".closing__art > svg");
+    if (closingArt) {
       gsap.fromTo(
-        mono,
-        { y: 14 },
+        closingArt,
+        { y: -18 },
         {
-          y: -10,
+          y: 22,
           ease: "none",
           scrollTrigger: {
             trigger: ".section--closing",
@@ -81,6 +81,15 @@ export function initScroll({ reduceMotion = false } = {}) {
         }
       );
     }
+
+    // the page-edge greenery breathes a little as the page scrolls
+    gsap.utils.toArray(".page-ambient .amb").forEach((el, i) => {
+      gsap.to(el, {
+        y: i ? 34 : -34,
+        ease: "none",
+        scrollTrigger: { start: 0, end: "max", scrub: 1.2 },
+      });
+    });
   });
 
   return {

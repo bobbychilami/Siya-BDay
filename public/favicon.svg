@@ -1,18 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Siya's First Birthday">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Siya's first birthday">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
-      <stop offset="0" stop-color="#6e2234" />
-      <stop offset="0.55" stop-color="#4a1220" />
-      <stop offset="1" stop-color="#330a16" />
+    <linearGradient id="favPaper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF9F0" />
+      <stop offset="0.55" stop-color="#FDF3EC" />
+      <stop offset="1" stop-color="#F6E7E6" />
     </linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="0.4" y2="1">
-      <stop offset="0" stop-color="#f7e6c3" />
-      <stop offset="0.55" stop-color="#e0bd85" />
-      <stop offset="1" stop-color="#b08a4f" />
+    <linearGradient id="favWash" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B8D9E5" stop-opacity="0.75" />
+      <stop offset="1" stop-color="#FFF9F0" stop-opacity="0.1" />
     </linearGradient>
   </defs>
-  <rect width="64" height="64" rx="13" fill="url(#bg)" />
-  <rect x="5.5" y="5.5" width="53" height="53" rx="9" fill="none" stroke="#d8b77b" stroke-opacity="0.45" stroke-width="1" />
-  <circle cx="32" cy="32" r="20.5" fill="none" stroke="#d8b77b" stroke-opacity="0.22" stroke-width="0.8" />
-  <text x="32" y="45.5" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="38" font-style="italic" fill="url(#gold)">S</text>
+  <rect width="64" height="64" rx="14" fill="url(#favPaper)" />
+  <circle cx="32" cy="29" r="21" fill="url(#favWash)" />
+  <circle cx="32" cy="32" r="25" fill="none" stroke="#B99A6B" stroke-opacity="0.75" stroke-width="1.4" />
+  <circle cx="32" cy="32" r="22.4" fill="none" stroke="#B99A6B" stroke-opacity="0.45" stroke-width="0.8" />
+  <path d="M41 21.6c-3.4-3.9-13.6-3.9-15.3 2.9-1.7 7 14.6 5.2 14.8 12.5.2 6.7-9.2 8.4-15.2 4.4" fill="none" stroke="#3E6B78" stroke-width="4.4" stroke-linecap="round" />
+  <circle cx="32" cy="50.2" r="1.7" fill="#F2D47B" />
 </svg>
