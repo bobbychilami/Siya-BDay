@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>OG card</title>
+    <style>
+      @font-face {
+        font-family: "Pinyon Script";
+        src: url("../fonts/pinyon-400.woff2") format("woff2");
+        font-weight: 400;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Italianno";
+        src: url("../fonts/italianno-400.woff2") format("woff2");
+        font-weight: 400;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Cormorant Garamond";
+        src: url("../fonts/cormorant-300.woff2") format("woff2");
+        font-weight: 300;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Cormorant Garamond";
+        src: url("../fonts/cormorant-500.woff2") format("woff2");
+        font-weight: 500;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "DM Sans";
+        src: url("../fonts/dmsans-400.woff2") format("woff2");
+        font-weight: 400;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "DM Sans";
+        src: url("../fonts/dmsans-500.woff2") format("woff2");
+        font-weight: 500;
+        font-display: block;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+
+      body {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 470px;
+        align-items: center;
+        background:
+          radial-gradient(ellipse 60% 70% at 88% 22%, rgba(184, 217, 229, 0.5), transparent 68%),
+          radial-gradient(ellipse 52% 54% at 10% 92%, rgba(242, 216, 216, 0.6), transparent 70%),
+          linear-gradient(158deg, #fdf7ef 0%, #fbf2ec 46%, #f6e9e7 100%);
+        font-family: "DM Sans", sans-serif;
+        color: #3e6b78;
+      }
+
+      .frame {
+        position: absolute;
+        inset: 26px;
+        border: 1px solid rgba(185, 154, 107, 0.55);
+        pointer-events: none;
+      }
+      .frame::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border: 1px solid rgba(185, 154, 107, 0.28);
+      }
+
+      .copy {
+        padding-left: 92px;
+        padding-bottom: 8px;
+      }
+
+      .eyebrow {
+        font-family: "DM Sans", sans-serif;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 0.44em;
+        text-transform: uppercase;
+        color: #c07f6c;
+      }
+
+      .name {
+        margin: 10px 0 0;
+        font-family: "Pinyon Script", cursive;
+        font-weight: 400;
+        font-size: 176px;
+        line-height: 0.86;
+        color: #3e6b78;
+        text-shadow: 0 6px 24px rgba(63, 107, 124, 0.12);
+      }
+
+      .turning {
+        margin: 2px 0 0 6px;
+        font-family: "Italianno", cursive;
+        font-size: 68px;
+        line-height: 1;
+        color: #b97e6b;
+      }
+
+      .rule {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin: 16px 0 18px;
+        color: #7f9a74;
+      }
+      .rule span {
+        height: 1px;
+        width: 92px;
+        background: linear-gradient(90deg, transparent, rgba(166, 138, 95, 0.8));
+      }
+      .rule span:last-child {
+        background: linear-gradient(90deg, rgba(166, 138, 95, 0.8), transparent);
+      }
+      .rule svg {
+        width: 150px;
+        height: 18px;
+      }
+
+      .date {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 300;
+        font-size: 34px;
+        letter-spacing: 0.02em;
+        color: #2f5663;
+      }
+
+      .meta {
+        margin-top: 8px;
+        font-size: 13px;
+        letter-spacing: 0.17em;
+        text-transform: uppercase;
+        color: #6d7b82;
+      }
+
+      .art {
+        position: relative;
+        justify-self: center;
+        width: 392px;
+        height: 500px;
+        padding: 9px;
+        background: rgba(255, 251, 246, 0.94);
+        border: 1px solid rgba(185, 154, 107, 0.6);
+        border-radius: 196px 196px 4px 4px;
+        box-shadow: 0 40px 70px -50px rgba(63, 107, 124, 0.7);
+      }
+      .art svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 188px 188px 2px 2px;
+      }
+
+      .sprig {
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        opacity: 0.5;
+      }
+      .sprig--tl {
+        left: 18px;
+        bottom: -58px;
+        width: 210px;
+        height: 210px;
+        opacity: 0.46;
+        transform: rotate(-18deg);
+      }
+      .sprig--br {
+        right: 292px;
+        bottom: -6px;
+        width: 178px;
+        height: 200px;
+        opacity: 0.42;
+        transform: rotate(4deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame" aria-hidden="true"></div>
+
+    <svg class="sprig sprig--tl" viewBox="0 0 220 220" aria-hidden="true"><use href="#bougainvillea" /></svg>
+    <svg class="sprig sprig--br" viewBox="0 0 180 200" aria-hidden="true"><use href="#lemon-spray" /></svg>
+
+    <div class="copy">
+      <div class="eyebrow">Our little sunshine</div>
+      <h1 class="name">Siya</h1>
+      <p class="turning">is turning one!</p>
+      <div class="rule" aria-hidden="true">
+        <span></span>
+        <svg viewBox="0 0 260 30"><use href="#flourish" /></svg>
+        <span></span>
+      </div>
+      <div class="date">Sunday, 22 November 2026</div>
+      <div class="meta">6:30 PM IST · Hotel Raviraj, Gadhinglaj</div>
+    </div>
+
+    <div class="art">
+      <svg viewBox="0 0 400 552" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#coast-scene" /></svg>
+    </div>
+
+    <script type="module">
+      import { SPRITE } from "../src/js/coast.generated.js";
+      document.body.insertAdjacentHTML("afterbegin", SPRITE);
+    </script>
+  </body>
+</html>
