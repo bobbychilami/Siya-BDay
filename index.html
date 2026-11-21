@@ -3,549 +3,310 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#B8D9E5" />
-  <title>Siya's First Birthday · 22 November 2026</title>
-  <meta name="description" content="Join Bobby &amp; Snehal Chilami as they celebrate their little sunshine, Siya, turning one. Sunday, 22 November 2026 at 6:30 PM, Hotel Raviraj, Gadhinglaj." />
+  <meta name="theme-color" content="#f4e7d1" />
+  <title>Siya turns one · 22 November 2026</title>
+  <meta name="description" content="A little Mediterranean magic: join Bobby and Snehal Chilami to celebrate Siya's first birthday on Sunday, 22 November 2026." />
   <meta name="robots" content="noindex, nofollow" />
   <link rel="canonical" href="https://bobbychilami.github.io/Siya-BDay/" />
-
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Siya's First Birthday" />
-  <meta property="og:title" content="Siya's First Birthday" />
-  <meta property="og:description" content="Join Bobby &amp; Snehal Chilami as they celebrate their little sunshine. 22 November 2026 | 6:30 PM" />
+  <meta property="og:site_name" content="Siya turns one" />
+  <meta property="og:title" content="A little Mediterranean magic · Siya turns one" />
+  <meta property="og:description" content="Join us for Siya's first birthday on Sunday, 22 November 2026 at 6:30 PM." />
   <meta property="og:image" content="https://bobbychilami.github.io/Siya-BDay/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Siya's first birthday invitation in a hand-painted Mediterranean stationery style, with powder blue, blush and lemon." />
   <meta property="og:url" content="https://bobbychilami.github.io/Siya-BDay/" />
   <meta name="twitter:card" content="summary_large_image" />
-
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="preload" href="/fonts/pinyon-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/cormorant-300.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/fonts/dmsans-400.woff2" as="font" type="font/woff2" crossorigin />
-
-  <!-- Linked (not imported from JS) so the invitation is styled even if the
-       script is disabled, blocked or fails to load. -->
+  <link rel="preload" href="./src/assets/envelope/derived/paper.jpg" as="image" fetchpriority="high" />
   <link rel="stylesheet" href="/src/styles/index.css" />
-
   <script>
-    /*
-      Fail-safe watchdog.
-      The cover animation keeps `.invite` invisible until JS signals readiness,
-      so if the module never loads the card would stay hidden. This synchronous
-      inline script reverts that: if the app never sets dataset.appReady within
-      9 s, or if any module script on the page errors, we remove the `js` class
-      so the no-JS static fallback in index.css paints the readable invitation.
-    */
     (function () {
       var root = document.documentElement;
       var handled = false;
-
-      function revert() {
+      function fallback() {
         if (handled) return;
         handled = true;
         root.classList.remove("js");
         root.classList.add("no-js");
+        root.classList.remove("is-locked");
       }
-
-      if (root.addEventListener) {
-        root.addEventListener(
-          "app-ready",
-          function () {
-            handled = true;
-          },
-          { once: true }
-        );
-      }
-
-      window.setTimeout(revert, 9000);
-
-      if (window.addEventListener) {
-        window.addEventListener(
-          "error",
-          function (e) {
-            if (e && e.target && e.target.tagName === "SCRIPT") revert();
-          },
-          true
-        );
-      }
+      root.addEventListener("app-ready", function () { handled = true; }, { once: true });
+      window.setTimeout(fallback, 9000);
+      window.addEventListener("error", function (event) {
+        if (event && event.target && event.target.tagName === "SCRIPT") fallback();
+      }, true);
     })();
   </script>
-
   <script type="module" src="/src/main.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#welcome">Skip to invitation</a>
+  <a class="skip-link" href="#invite">Skip to invitation</a>
 
   <div class="site" id="site">
-    <!-- ============ COVER / PAINTED ENVELOPE ============ -->
     <section class="cover" id="cover" aria-label="Invitation opening">
-      <div class="cover__scene" aria-hidden="true">
-        <span class="scene__wash"></span>
-        <span class="scene__grain"></span>
-        <svg class="scene__flora scene__flora--tl" viewBox="0 0 220 220"><use href="#bougainvillea" /></svg>
-        <svg class="scene__flora scene__flora--br" viewBox="0 0 200 200"><use href="#rose-spray" /></svg>
-        <span class="scene__vignette"></span>
-      </div>
-
-      <button class="skip-open" id="skipOpen" type="button">Skip opening</button>
-
       <div class="stage" id="stage">
-        <div class="env-float">
-          <div class="envelope" id="envelope">
-            <div class="env-shadow" aria-hidden="true"></div>
+        <div class="envelope" id="envelope">
+          <!-- the envelope paper: edge to edge on mobile, a large card on desktop -->
+          <div class="env-back" aria-hidden="true">
+            <span class="env-back__light"></span>
+            <span class="env-back__grain"></span>
+          </div>
 
-            <div class="env-inside" aria-hidden="true">
-              <span class="env-inside__liner"></span>
-              <span class="env-inside__mark">S</span>
-              <span class="env-inside__shade"></span>
-            </div>
+          <!-- inside the envelope: a painted stretch of coast -->
+          <div class="env-liner" aria-hidden="true">
+            <img class="env-liner__scene" src="./src/assets/envelope/derived/coast.jpg" alt="" />
+            <span class="env-liner__shade"></span>
+            <span class="env-liner__grain"></span>
+          </div>
 
-            <!-- Fold shading. The four slices already carry the painting; these
-                 gradients and seams give each slice the slight light change of
-                 real folded paper, so the envelope reads as a folded object. -->
-            <svg class="env-fold-shades" width="0" height="0" aria-hidden="true" focusable="false" style="position: absolute">
-              <defs>
-                <linearGradient id="foldShadeLeft" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#3f6b7c" stop-opacity=".3" />
-                  <stop offset=".34" stop-color="#3f6b7c" stop-opacity=".1" />
-                  <stop offset=".72" stop-color="#3f6b7c" stop-opacity="0" />
-                </linearGradient>
-                <linearGradient id="foldShadeRight" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#3f6b7c" stop-opacity="0" />
-                  <stop offset=".3" stop-color="#3f6b7c" stop-opacity=".06" />
-                  <stop offset="1" stop-color="#3f6b7c" stop-opacity=".26" />
-                </linearGradient>
-                <linearGradient id="foldShadeTop" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#fffdf7" stop-opacity=".28" />
-                  <stop offset=".55" stop-color="#fffdf7" stop-opacity=".06" />
-                  <stop offset="1" stop-color="#3f6b7c" stop-opacity=".16" />
-                </linearGradient>
-                <linearGradient id="foldShadeBottom" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#3f6b7c" stop-opacity=".04" />
-                  <stop offset=".6" stop-color="#3f6b7c" stop-opacity=".08" />
-                  <stop offset="1" stop-color="#3f6b7c" stop-opacity=".24" />
-                </linearGradient>
-              </defs>
-            </svg>
+          <!-- the card travels inside this clipped frame -->
+          <div class="env-card-frame" id="cardFrame">
+            <article class="invite" id="invite" aria-label="Siya's first birthday invitation">
+              <div class="invite__paper">
+                <span class="invite__grain" aria-hidden="true"></span>
+                <span class="invite__rule invite__rule--outer" aria-hidden="true"></span>
+                <span class="invite__rule invite__rule--inner" aria-hidden="true"></span>
+                <img class="invite__sprig invite__sprig--lemon" src="./src/assets/envelope/derived/lemon-branch.webp" alt="" aria-hidden="true" />
+                <img class="invite__sprig invite__sprig--bougainvillea" src="./src/assets/envelope/derived/bougainvillea.webp" alt="" aria-hidden="true" />
+                <img class="invite__sprig invite__sprig--olive" src="./src/assets/envelope/derived/olive-branch.webp" alt="" aria-hidden="true" />
 
-            <!-- Four slices of one continuous painting: the landscape stays
-                 aligned while each fold moves. -->
-            <svg class="env-fold env-fold--top" id="envTop" viewBox="0 0 400 552" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-              <use href="#coast-scene" />
-              <rect width="400" height="552" fill="url(#foldShadeTop)" />
-              <path d="M0 0 L200 208 L400 0" fill="none" stroke="#3f6b7c" stroke-opacity=".16" stroke-width="1" vector-effect="non-scaling-stroke" />
-            </svg>
-            <svg class="env-fold env-fold--left" id="envLeft" viewBox="0 0 400 552" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-              <use href="#coast-scene" />
-              <rect width="400" height="552" fill="url(#foldShadeLeft)" />
-              <path d="M0 0 L200 208 L0 552" fill="none" stroke="#3f6b7c" stroke-opacity=".15" stroke-width="1" vector-effect="non-scaling-stroke" />
-            </svg>
-            <svg class="env-fold env-fold--right" id="envRight" viewBox="0 0 400 552" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-              <use href="#coast-scene" />
-              <rect width="400" height="552" fill="url(#foldShadeRight)" />
-              <path d="M400 0 L200 208 L400 552" fill="none" stroke="#3f6b7c" stroke-opacity=".15" stroke-width="1" vector-effect="non-scaling-stroke" />
-            </svg>
-            <svg class="env-fold env-fold--bottom" id="envBottom" viewBox="0 0 400 552" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-              <use href="#coast-scene" />
-              <rect width="400" height="552" fill="url(#foldShadeBottom)" />
-              <path d="M0 552 L200 208 L400 552" fill="none" stroke="#3f6b7c" stroke-opacity=".12" stroke-width="1" vector-effect="non-scaling-stroke" />
-            </svg>
+                <div class="invite__body">
+                  <p class="invite__kicker invite__reveal">A first birthday</p>
+                  <h1 class="invite__title">
+                    <span class="invite__name invite__reveal">Siya</span>
+                    <span class="invite__turns invite__reveal">turns <em>one</em></span>
+                  </h1>
+                  <p class="invite__line invite__reveal">With love, Bobby and Snehal invite you to celebrate their little girl’s first birthday.</p>
 
-            <div class="ribbon" id="ribbon" aria-hidden="true">
-              <span class="ribbon__half ribbon__half--top"></span>
-              <span class="ribbon__half ribbon__half--bottom"></span>
-              <span class="ribbon__sheen"></span>
-            </div>
+                  <div class="invite__details invite__reveal">
+                    <p class="invite__date">Sunday, 22 November 2026</p>
+                    <p class="invite__time">6:30 <small>PM IST</small></p>
+                    <address class="invite__venue">
+                      <strong>Hotel Raviraj</strong>
+                      Ghijavne Road, Gadhinglaj – 416502<br />
+                      Maharashtra, India
+                    </address>
+                  </div>
 
-            <button class="bow" id="bow" type="button" aria-label="Untie the ribbon to open your invitation">
-              <svg class="bow__art" viewBox="0 0 240 168" aria-hidden="true" focusable="false">
-                <defs>
-                  <linearGradient id="ribbonGrad" x1="0" y1="0" x2="0.85" y2="1">
-                    <stop offset="0" stop-color="#dff1fa" />
-                    <stop offset=".3" stop-color="#a9cddf" />
-                    <stop offset=".55" stop-color="#e9f6fd" />
-                    <stop offset=".8" stop-color="#8db9cd" />
-                    <stop offset="1" stop-color="#76a4ba" />
-                  </linearGradient>
-                  <linearGradient id="wrapGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#c4e0ee" />
-                    <stop offset=".38" stop-color="#f7fdff" />
-                    <stop offset=".72" stop-color="#d3e9f4" />
-                    <stop offset="1" stop-color="#a9c9da" />
-                  </linearGradient>
-                  <linearGradient id="bowShade" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#5e8ea3" stop-opacity="0" />
-                    <stop offset="1" stop-color="#3f6b7c" stop-opacity=".28" />
-                  </linearGradient>
-                </defs>
+                  <div class="invite__actions invite__reveal">
+                    <a class="invite__cta" id="rsvpLink" href="https://wa.me/917387785196?text=Hello%20Bobby%20and%20Snehal%21%20Thank%20you%20for%20the%20lovely%20invitation%20to%20Siya%27s%20first%20birthday%20on%20Sunday%2C%2022%20November%202026%20at%206%3A30%20PM.%20We%20would%20be%20delighted%20to%20celebrate%20with%20you." target="_blank" rel="noopener noreferrer">
+                      RSVP on WhatsApp
+                    </a>
+                    <a class="invite__ghost" id="directionsLink" href="https://www.google.com/maps/dir/?api=1&amp;destination=Hotel%20Raviraj%2C%20Ghijavne%20Road%2C%20Gadhinglaj%20416502%2C%20Maharashtra%2C%20India" target="_blank" rel="noopener noreferrer">
+                      Get directions <span aria-hidden="true">↗</span>
+                    </a>
+                  </div>
+                  <p class="invite__hosts invite__reveal">Bobby &amp; Snehal Chilami</p>
+                </div>
 
-                <g class="bow__tail bow__tail--l">
-                  <path d="M112 92 C104 118 92 142 76 162 C84 166 96 168 104 164 C116 142 124 116 128 96 Z" fill="url(#ribbonGrad)" stroke="#8fb3c6" stroke-opacity=".4" stroke-width=".8" />
-                  <path d="M112 92 C104 118 92 142 76 162 C84 166 96 168 104 164 C116 142 124 116 128 96 Z" fill="url(#bowShade)" opacity=".5" />
-                  <path d="M113 99 C107 121 97 144 84 160" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="1.6" stroke-linecap="round" />
-                  <path d="M121 102 C115 124 106 144 96 158" fill="none" stroke="#6f9cb0" stroke-opacity=".38" stroke-width="1.2" stroke-linecap="round" />
-                </g>
-                <g class="bow__tail bow__tail--r">
-                  <path d="M128 92 C136 118 148 142 164 162 C156 166 144 168 136 164 C124 142 116 116 112 96 Z" fill="url(#ribbonGrad)" stroke="#8fb3c6" stroke-opacity=".4" stroke-width=".8" />
-                  <path d="M128 92 C136 118 148 142 164 162 C156 166 144 168 136 164 C124 142 116 116 112 96 Z" fill="url(#bowShade)" opacity=".5" />
-                  <path d="M127 99 C133 121 143 144 156 160" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="1.6" stroke-linecap="round" />
-                  <path d="M119 102 C125 124 134 144 144 158" fill="none" stroke="#6f9cb0" stroke-opacity=".38" stroke-width="1.2" stroke-linecap="round" />
-                </g>
+                <nav class="invite__nav" aria-label="Invitation sections">
+                  <a href="#details">The day</a>
+                  <a href="#venue">The place</a>
+                  <a href="#rsvp">Reply</a>
+                  <a class="invite__scroll" href="#welcome">Scroll <span aria-hidden="true">↓</span></a>
+                </nav>
+              </div>
+            </article>
+          </div>
 
-                <!-- the short band that wraps the ribbon under the knot -->
-                <g class="bow__wrap">
-                  <rect x="95" y="68" width="50" height="32" rx="7" fill="url(#wrapGrad)" stroke="#8fb3c6" stroke-opacity=".45" stroke-width=".8" />
-                  <path d="M96 76 C112 81 128 81 144 76" fill="none" stroke="#9fc0d2" stroke-opacity=".35" stroke-width="1" />
-                  <path d="M96 92 C112 96 128 96 144 92" fill="none" stroke="#ffffff" stroke-opacity=".4" stroke-width="1" />
-                </g>
+          <!-- the front panel of the envelope, in front of the card -->
+          <div class="env-pocket" aria-hidden="true">
+            <span class="env-pocket__shade"></span>
+            <span class="env-pocket__grain"></span>
+          </div>
 
-                <g class="bow__loop bow__loop--l">
-                  <path d="M114 84 C100 54 66 32 44 34 C24 36 20 52 32 66 C46 82 84 93 114 84 Z" fill="url(#ribbonGrad)" stroke="#8fb3c6" stroke-opacity=".45" stroke-width=".8" />
-                  <path d="M114 84 C100 54 66 32 44 34 C24 36 20 52 32 66 C46 82 84 93 114 84 Z" fill="url(#bowShade)" opacity=".62" />
-                  <path d="M106 79 C92 58 68 45 50 45 C38 45 33 52 39 59" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="2" stroke-linecap="round" />
-                  <path d="M60 50 C76 58 94 72 110 81" fill="none" stroke="#9fc0d2" stroke-opacity=".3" stroke-width="1.2" />
-                  <path d="M38 78 C58 89 92 92 112 85 C92 95 58 94 38 78 Z" fill="#3f6b7c" opacity=".2" />
-                </g>
-                <g class="bow__loop bow__loop--r">
-                  <path d="M126 84 C140 54 174 32 196 34 C216 36 220 52 208 66 C194 82 156 93 126 84 Z" fill="url(#ribbonGrad)" stroke="#8fb3c6" stroke-opacity=".45" stroke-width=".8" />
-                  <path d="M126 84 C140 54 174 32 196 34 C216 36 220 52 208 66 C194 82 156 93 126 84 Z" fill="url(#bowShade)" opacity=".62" />
-                  <path d="M134 79 C148 58 172 45 190 45 C202 45 207 52 201 59" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="2" stroke-linecap="round" />
-                  <path d="M180 50 C164 58 146 72 130 81" fill="none" stroke="#9fc0d2" stroke-opacity=".3" stroke-width="1.2" />
-                  <path d="M202 78 C182 89 148 92 128 85 C148 95 182 94 202 78 Z" fill="#3f6b7c" opacity=".2" />
-                </g>
+          <!-- painted fold seams -->
+          <svg class="env-seams" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path class="env-seams__line" d="M8,0 L50,53 L92,0" />
+            <path class="env-seams__stitch" d="M8,0 L50,53 L92,0" />
+            <path class="env-seams__thread" d="M8,0 L50,53 L92,0" />
+            <path class="env-seams__fold" d="M50,53 L1,99.6 M50,53 L99,99.6" />
+          </svg>
 
-                <ellipse cx="120" cy="99" rx="27" ry="8" fill="#3f6b7c" opacity=".16" />
-                <ellipse class="bow__knot" cx="120" cy="86" rx="17" ry="13.5" fill="url(#ribbonGrad)" stroke="#8fb3c6" stroke-opacity=".5" stroke-width=".9" />
-                <ellipse cx="120" cy="92" rx="15" ry="7" fill="#3f6b7c" opacity=".16" />
-                <path d="M105 88 C113 81 128 81 135 88" fill="none" stroke="#9fc0d2" stroke-opacity=".4" stroke-width="1" />
-                <ellipse cx="113" cy="79" rx="6" ry="4" fill="#ffffff" opacity=".55" transform="rotate(-18 113 79)" />
+          <!-- the flap, hinged at the top edge -->
+          <div class="env-flap" id="flap" aria-hidden="true">
+            <div class="env-flap__inner">
+              <span class="env-flap__shade"></span>
+              <span class="env-flap__lift"></span>
+              <svg class="env-flap__seam" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                <path class="env-seams__line" d="M0,0 L50,100 L100,0" />
+                <path class="env-seams__stitch" d="M0,0 L50,100 L100,0" />
+                <path class="env-seams__thread" d="M0,0 L50,100 L100,0" />
               </svg>
-            </button>
+            </div>
+            <div class="env-flap__under">
+              <span class="env-flap__lining"></span>
+            </div>
+            <img class="env-flap__sprig" src="./src/assets/envelope/derived/lemon-branch.webp" alt="" />
           </div>
+
+          <!-- ribbon, bow, knot, wax seal -->
+          <div class="env-tie" id="tie" aria-hidden="true">
+            <img class="tie__band tie__band--l" src="./src/assets/envelope/derived/ribbon-left.webp" alt="" />
+            <img class="tie__band tie__band--r" src="./src/assets/envelope/derived/ribbon-right.webp" alt="" />
+            <img class="tie__tail tie__tail--l" src="./src/assets/envelope/derived/tail-left.webp" alt="" />
+            <img class="tie__tail tie__tail--r" src="./src/assets/envelope/derived/tail-right.webp" alt="" />
+            <img class="tie__bow" src="./src/assets/envelope/derived/bow.webp" alt="" />
+            <span class="tie__knot"></span>
+            <span class="tie__glow"></span>
+            <img class="tie__seal" id="waxSeal" src="./src/assets/envelope/derived/seal.webp" alt="" />
+          </div>
+
+          <button class="env-trigger" id="envelopeTrigger" type="button" aria-label="Open the invitation envelope">
+            <span class="env-trigger__pulse" aria-hidden="true"></span>
+          </button>
         </div>
-
-        <span class="env-tap-hint" id="tapHint">Untie the ribbon to open your invitation</span>
-
-        <div class="bloom" id="bloom" aria-hidden="true"></div>
-        <canvas class="dust" id="dust" aria-hidden="true"></canvas>
-
-        <!-- the invitation that rises out of the envelope -->
-        <article class="invite" id="invite" aria-label="Invitation">
-          <div class="invite__paper" aria-hidden="true"></div>
-          <div class="invite__frame" id="inviteFrame" aria-hidden="true">
-            <span class="frame-line frame-line--outer"></span>
-            <span class="frame-line frame-line--inner"></span>
-          </div>
-
-          <svg class="invite__corner invite__corner--tl" viewBox="0 0 200 220" aria-hidden="true" focusable="false"><use href="#corner-flora" /></svg>
-          <svg class="invite__corner invite__corner--tr" viewBox="0 0 200 220" aria-hidden="true" focusable="false"><use href="#corner-flora-r" /></svg>
-          <svg class="invite__sprig invite__sprig--l" viewBox="0 0 180 200" aria-hidden="true" focusable="false"><use href="#lemon-spray" /></svg>
-          <svg class="invite__sprig invite__sprig--r" viewBox="0 0 160 220" aria-hidden="true" focusable="false"><use href="#olive-spray" /></svg>
-
-          <span class="butterfly-slot" data-butterfly="blush" style="--b-size:34px;--b-x:7%;--b-y:12%;--b-dur:17s;--b-delay:-3s"></span>
-          <span class="butterfly-slot" data-butterfly="sea" style="--b-size:24px;--b-x:84%;--b-y:36%;--b-dur:21s;--b-delay:-9s"></span>
-
-          <div class="invite__inner">
-            <div class="cover__top">
-              <span class="eyebrow eyebrow--cover">Our Little Sunshine</span>
-            </div>
-
-            <h1 class="name" id="name">
-              <span class="name__text">Siya</span>
-              <span class="name__shine" aria-hidden="true">Siya</span>
-            </h1>
-
-            <p class="cover__turning">is turning one!</p>
-
-            <svg class="divider divider--sm" aria-hidden="true"><use href="#flourish" /></svg>
-
-            <figure class="cover__cameo" aria-hidden="true">
-              <svg viewBox="0 0 400 552" preserveAspectRatio="xMidYMid slice"><use href="#coast-scene" /></svg>
-            </figure>
-
-            <div class="cover__copy">
-              <p>One little year, a million little smiles, and a lifetime of love.</p>
-              <p>Please join us as we celebrate her first birthday.</p>
-            </div>
-
-            <div class="cover__date">
-              <span class="cover__day">Sunday</span>
-              <span class="cover__date-line">
-                <span class="date-rule" aria-hidden="true"></span>
-                <span class="cover__date-value">22 November 2026</span>
-                <span class="date-rule" aria-hidden="true"></span>
-              </span>
-              <span class="cover__time">6:30 PM <span class="muted">IST</span></span>
-            </div>
-
-            <div class="scroll-hint" id="scrollHint">
-              <span>Scroll to explore</span>
-              <svg viewBox="0 0 20 26" aria-hidden="true"><path d="M10 1 V22 M3.5 15.5 L10 22.5 L16.5 15.5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" /></svg>
-            </div>
-          </div>
-        </article>
       </div>
+
+      <p class="cover__hint" id="tapHint">Tap the envelope to open your invitation</p>
+      <button class="skip-open" id="skipOpen" type="button">Skip opening <span aria-hidden="true">↗</span></button>
     </section>
 
     <main id="main">
-      <!-- ============ WELCOME ============ -->
-      <section class="section section--welcome" id="welcome" aria-labelledby="welcome-title">
-        <div class="torn" aria-hidden="true"></div>
-        <div class="section__inner">
-          <div class="section__head" data-reveal>
-            <span class="eyebrow">With Love</span>
-            <h2 class="script-title" id="welcome-title">One Whole Year<br />of Magic</h2>
-            <svg class="divider" aria-hidden="true"><use href="#flourish" /></svg>
+      <section class="story section section--welcome" id="welcome" aria-labelledby="welcome-title">
+        <div class="story__index" aria-hidden="true">01 <i></i> A note from us</div>
+        <div class="story__inner">
+          <div class="welcome__art" data-reveal>
+            <img src="./src/assets/envelope/derived/lemon-tree.webp" alt="A potted lemon tree in a blue-and-white ceramic planter" loading="lazy" />
+            <span class="welcome__art-caption">A little sunshine, all year long</span>
           </div>
-
-          <div class="prose" data-reveal>
-            <p>365 days of tiny smiles, little adventures, warm cuddles and endless love.</p>
-            <p>Our little <strong>Siya</strong> has filled our world with happiness in ways we could never have imagined.</p>
-            <p>As she celebrates her very first birthday, we would love to share this beautiful moment with you.</p>
-            <p>Your presence will make her special day even more memorable.</p>
+          <div class="welcome__copy" data-reveal>
+            <span class="eyebrow">With all our love</span>
+            <h2 class="display-title" id="welcome-title">One whole year<br />of little wonders.</h2>
+            <p>Our days have been brighter, sweeter and full of new joy since Siya arrived. We would love to have you with us for an evening of love and laughter as our little girl turns one.</p>
+            <p class="signature"><span>With love,</span><strong>Bobby &amp; Snehal Chilami</strong></p>
           </div>
-
-          <div class="welcome__signature" data-reveal>
-            <span class="welcome__with">With love,</span>
-            <span class="welcome__names">Bobby &amp; Snehal Chilami</span>
-          </div>
-
-          <svg class="section-bouquet section-bouquet--br" viewBox="0 0 200 200" aria-hidden="true"><use href="#rose-spray" /></svg>
-          <span class="butterfly-slot" data-butterfly="lemon" style="--b-size:26px;--b-x:10%;--b-y:80%;--b-dur:19s;--b-delay:-6s"></span>
         </div>
+        <img class="story__sprig story__sprig--welcome" src="./src/assets/envelope/derived/olive-branch.webp" alt="" aria-hidden="true" loading="lazy" />
       </section>
 
-      <!-- ============ COUNTDOWN ============ -->
-      <section class="section section--countdown" id="countdown" aria-labelledby="countdown-title">
-        <div class="torn" aria-hidden="true"></div>
-        <div class="section__inner">
-          <div class="section__head" data-reveal>
-            <span class="eyebrow">Save the Date</span>
-            <h2 class="script-title" id="countdown-title">Counting Down<br />to the Magic</h2>
+      <section class="details section" id="details" aria-labelledby="details-title">
+        <div class="story__index" aria-hidden="true">02 <i></i> The day</div>
+        <div class="details__inner">
+          <div class="details__heading" data-reveal>
+            <span class="eyebrow">Please save the date</span>
+            <h2 class="display-title" id="details-title">A day to<br />remember.</h2>
+            <p>Join us for an evening together as we celebrate Siya’s first birthday.</p>
           </div>
-
-          <div class="countdown" id="countdownGrid" data-reveal>
-            <div class="countdown__unit">
-              <span class="countdown__digit" data-unit="days">--</span>
-              <span class="countdown__label">Days</span>
+          <div class="details__paper" data-reveal>
+            <img class="details__wash" src="./src/assets/envelope/derived/seaside-wash.webp" alt="" aria-hidden="true" loading="lazy" />
+            <span class="details__day">Sunday</span>
+            <time class="details__date" datetime="2026-11-22">22 November<br />2026</time>
+            <span class="details__rule" aria-hidden="true"></span>
+            <span class="details__time">6:30 <small>PM IST</small></span>
+            <div class="countdown" id="countdownGrid" aria-label="Countdown to the celebration">
+              <div class="countdown__unit"><span data-unit="days">--</span><small>Days</small></div>
+              <div class="countdown__unit"><span data-unit="hours">--</span><small>Hours</small></div>
+              <div class="countdown__unit"><span data-unit="minutes">--</span><small>Minutes</small></div>
+              <div class="countdown__unit"><span data-unit="seconds">--</span><small>Seconds</small></div>
             </div>
-            <svg class="countdown__sep" viewBox="0 0 120 100" aria-hidden="true"><use href="#white-blooms" /></svg>
-            <div class="countdown__unit">
-              <span class="countdown__digit" data-unit="hours">--</span>
-              <span class="countdown__label">Hours</span>
-            </div>
-            <svg class="countdown__sep" viewBox="0 0 120 100" aria-hidden="true"><use href="#white-blooms" /></svg>
-            <div class="countdown__unit">
-              <span class="countdown__digit" data-unit="minutes">--</span>
-              <span class="countdown__label">Minutes</span>
-            </div>
-            <svg class="countdown__sep" viewBox="0 0 120 100" aria-hidden="true"><use href="#white-blooms" /></svg>
-            <div class="countdown__unit">
-              <span class="countdown__digit" data-unit="seconds">--</span>
-              <span class="countdown__label">Seconds</span>
-            </div>
+            <p class="countdown__status" id="countdownStatus" role="status"></p>
+            <img class="details__lantern" src="./src/assets/envelope/derived/lantern.webp" alt="" aria-hidden="true" loading="lazy" />
           </div>
-          <p class="countdown__status" id="countdownStatus" role="status" aria-live="polite" data-reveal>
-            Sunday, 22 November 2026 · 6:30 PM IST
-          </p>
-
-          <svg class="divider divider--soft" aria-hidden="true"><use href="#flourish-soft" /></svg>
-          <p class="countdown__note" data-reveal>Every second brings us closer to the happiest little celebration.</p>
         </div>
+        <img class="details__lemon" src="./src/assets/envelope/derived/lemon-branch.webp" alt="" aria-hidden="true" loading="lazy" />
       </section>
 
-      <!-- ============ DETAILS ============ -->
-      <section class="section section--details" id="details" aria-labelledby="details-title">
-        <div class="torn" aria-hidden="true"></div>
-        <div class="section__inner">
-          <div class="section__head" data-reveal>
-            <span class="eyebrow">The Special Day</span>
-            <h2 class="script-title" id="details-title">Join Us</h2>
+      <section class="venue section" id="venue" aria-labelledby="venue-title">
+        <div class="story__index" aria-hidden="true">03 <i></i> The place</div>
+        <div class="venue__inner">
+          <div class="venue__art" data-reveal>
+            <img class="venue__arch" src="./src/assets/envelope/derived/flower-arch.webp" alt="A flower-covered stone arch framing a blue sea" loading="lazy" />
+            <img class="venue__balustrade" src="./src/assets/envelope/derived/balustrade.webp" alt="A little stone balustrade with bougainvillea" loading="lazy" />
+            <span class="venue__caption">A touch of the coast, a garden close to home</span>
           </div>
-
-          <div class="details-card" data-reveal>
-            <span class="details-card__corner details-card__corner--tl" aria-hidden="true"></span>
-            <span class="details-card__corner details-card__corner--tr" aria-hidden="true"></span>
-            <span class="details-card__corner details-card__corner--bl" aria-hidden="true"></span>
-            <span class="details-card__corner details-card__corner--br" aria-hidden="true"></span>
-
-            <span class="details-card__day">Sunday</span>
-            <span class="details-card__date">22 November 2026</span>
-            <span class="details-card__rule" aria-hidden="true"></span>
-            <span class="details-card__time">6:30 <span class="small">PM</span></span>
-            <span class="details-card__tz">Indian Standard Time</span>
-          </div>
-
-          <p class="details__line" data-reveal>An evening filled with love, laughter and beautiful memories as we celebrate Siya turning one.</p>
-          <svg class="divider" aria-hidden="true"><use href="#flourish" /></svg>
-
-          <svg class="section-bouquet section-bouquet--tr" viewBox="0 0 180 200" aria-hidden="true"><use href="#lemon-spray" /></svg>
-          <span class="butterfly-slot" data-butterfly="sea" style="--b-size:28px;--b-x:12%;--b-y:18%;--b-dur:22s;--b-delay:-12s"></span>
-        </div>
-      </section>
-
-      <!-- ============ VENUE ============ -->
-      <section class="section section--venue" id="venue" aria-labelledby="venue-title">
-        <div class="torn" aria-hidden="true"></div>
-        <div class="section__inner">
-          <div class="section__head" data-reveal>
-            <span class="eyebrow">The Venue</span>
-            <h2 class="script-title" id="venue-title">Where We<br />Celebrate</h2>
-          </div>
-
-          <figure class="venue-art" data-reveal>
-            <svg viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A watercolour impression of a garden arch with climbing roses, lemon trees and a distant sea — an artistic illustration, not a photograph of the venue.">
-              <use href="#venue-scene" />
-            </svg>
-            <figcaption class="venue-art__caption">An artistic impression of the garden setting</figcaption>
-          </figure>
-
-          <div class="venue__info" data-reveal>
-            <h3 class="venue__name">Hotel Raviraj</h3>
-            <p class="venue__address">
-              Ghijavne Road,<br />
-              Gadhinglaj - 416502,<br />
-              Maharashtra, India.
+          <div class="venue__copy" data-reveal>
+            <span class="eyebrow">Our gathering place</span>
+            <h2 class="display-title" id="venue-title">Meet us<br />in Gadhinglaj.</h2>
+            <p class="venue__name">Hotel Raviraj</p>
+            <address>Ghijavne Road<br />Gadhinglaj – 416502<br />Maharashtra, India</address>
+            <p class="venue__note">The Italian coast is our invitation’s inspiration. We’ll celebrate together here in Maharashtra.</p>
+            <p class="venue__links">
+              <a class="text-link" id="mapsLink" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Raviraj%2C%20Ghijavne%20Road%2C%20Gadhinglaj%20416502%2C%20Maharashtra%2C%20India" target="_blank" rel="noopener noreferrer">Open in Google Maps <span aria-hidden="true">↗</span></a>
+              <a class="text-link" id="venueDirectionsLink" href="https://www.google.com/maps/dir/?api=1&amp;destination=Hotel%20Raviraj%2C%20Ghijavne%20Road%2C%20Gadhinglaj%20416502%2C%20Maharashtra%2C%20India" target="_blank" rel="noopener noreferrer">Get directions <span aria-hidden="true">↗</span></a>
             </p>
-            <a class="link-action" id="mapsLink" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Raviraj%2C%20Ghijavne%20Road%2C%20Gadhinglaj%20416502%2C%20Maharashtra%2C%20India" target="_blank" rel="noopener noreferrer">
-              <span>Open in Google Maps</span>
-              <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 14 L14 4 M6 4 h8 v8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" /></svg>
-            </a>
           </div>
-
-          <svg class="section-bouquet section-bouquet--tl" viewBox="0 0 220 220" aria-hidden="true"><use href="#bougainvillea" /></svg>
-          <span class="butterfly-slot" data-butterfly="blush" style="--b-size:30px;--b-x:82%;--b-y:46%;--b-dur:20s;--b-delay:-4s"></span>
         </div>
+        <img class="venue__tree" src="./src/assets/envelope/derived/lemon-tree.webp" alt="" aria-hidden="true" loading="lazy" />
       </section>
 
-      <!-- ============ RSVP ============ -->
-      <section class="section section--rsvp" id="rsvp" aria-labelledby="rsvp-title">
-        <div class="torn" aria-hidden="true"></div>
-        <div class="section__inner">
-          <div class="section__head" data-reveal>
-            <span class="eyebrow">Kindly Reply</span>
-            <h2 class="script-title" id="rsvp-title">Will You<br />Join Us?</h2>
-            <svg class="divider" aria-hidden="true"><use href="#flourish" /></svg>
+      <section class="rsvp-section section" id="rsvp" aria-labelledby="rsvp-title">
+        <div class="story__index" aria-hidden="true">04 <i></i> Kindly reply</div>
+        <div class="rsvp__inner">
+          <div class="rsvp__intro" data-reveal>
+            <span class="eyebrow">We hope you can join us</span>
+            <h2 class="display-title" id="rsvp-title">Will you<br />be there?</h2>
+            <p>Your presence will make this day all the more special.</p>
+            <a class="invite__cta rsvp__quick" id="rsvpQuickLink" href="https://wa.me/917387785196?text=Hello%20Bobby%20and%20Snehal%21%20Thank%20you%20for%20the%20lovely%20invitation%20to%20Siya%27s%20first%20birthday%20on%20Sunday%2C%2022%20November%202026%20at%206%3A30%20PM.%20We%20would%20be%20delighted%20to%20celebrate%20with%20you." target="_blank" rel="noopener noreferrer">RSVP on WhatsApp</a>
+            <img src="./src/assets/envelope/derived/bougainvillea.webp" alt="" aria-hidden="true" loading="lazy" />
           </div>
-
-          <p class="rsvp__intro" data-reveal>Your presence will make this celebration even more special.</p>
-
           <div class="rsvp" id="rsvpRoot" data-reveal>
-            <button class="rsvp-seal" id="rsvpToggle" type="button" aria-expanded="false" aria-controls="rsvpPanel">
-              <span class="rsvp-seal__disc" aria-hidden="true">
-                <svg class="rsvp-seal__ring" viewBox="0 0 120 120" focusable="false">
-                  <circle cx="60" cy="60" r="42" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width=".8" />
-                  <circle cx="60" cy="60" r="37" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-width=".6" stroke-dasharray="1 4" />
-                  <g fill="currentColor" opacity=".6">
-                    <ellipse cx="60" cy="14" rx="2.4" ry="4.4" />
-                    <ellipse cx="60" cy="106" rx="2.4" ry="4.4" />
-                    <ellipse cx="14" cy="60" rx="4.4" ry="2.4" />
-                    <ellipse cx="106" cy="60" rx="4.4" ry="2.4" />
-                  </g>
-                  <g fill="none" stroke="currentColor" stroke-width=".7" opacity=".55">
-                    <path d="M60 18 C55 12 48 10 44 12 C48 17 55 19 60 18" />
-                    <path d="M60 102 C65 108 72 110 76 108 C72 103 65 101 60 102" />
-                  </g>
-                </svg>
-              </span>
-              <span class="rsvp-seal__text">RSVP</span>
-              <span class="rsvp-seal__hint" id="rsvpHint">Open the reply card</span>
+            <button class="rsvp__toggle" id="rsvpToggle" type="button" aria-expanded="false" aria-controls="rsvpPanel">
+              <span class="rsvp__seal-art"><img src="./src/assets/envelope/derived/seal.webp" alt="" aria-hidden="true" loading="lazy" /></span>
+              <span class="rsvp__toggle-copy"><strong>Send a little reply</strong><small>Open your response card</small></span>
+              <span class="rsvp__arrow" aria-hidden="true">↓</span>
             </button>
-
-            <div class="rsvp-panel" id="rsvpPanel" hidden>
+            <div class="rsvp__panel" id="rsvpPanel" hidden>
               <form class="rsvp-form" id="rsvpForm" novalidate>
                 <div class="field">
-                  <label for="guestName">Guest name</label>
-                  <input id="guestName" name="name" type="text" autocomplete="name" required maxlength="80" placeholder="Your name" />
+                  <label for="guestName">Your name</label>
+                  <input id="guestName" name="name" type="text" autocomplete="name" required maxlength="80" placeholder="Name" />
                   <p class="field__error" id="nameError" hidden>Please enter your name.</p>
                 </div>
-
                 <fieldset class="field field--choice">
-                  <legend>Will you be attending?</legend>
-                  <label class="radio">
-                    <input type="radio" name="attending" value="Joyfully accepts" required />
-                    <span class="radio__mark" aria-hidden="true"></span>
-                    <span>Joyfully accepts</span>
-                  </label>
-                  <label class="radio">
-                    <input type="radio" name="attending" value="Regretfully declines" />
-                    <span class="radio__mark" aria-hidden="true"></span>
-                    <span>Regretfully declines</span>
-                  </label>
-                  <p class="field__error" id="attendError" hidden>Please let us know if you can join.</p>
+                  <legend>Can you celebrate with us?</legend>
+                  <label class="radio"><input type="radio" name="attending" value="Joyfully accepts" required /><span class="radio__mark" aria-hidden="true"></span><span>Joyfully, yes</span></label>
+                  <label class="radio"><input type="radio" name="attending" value="Regretfully declines" /><span class="radio__mark" aria-hidden="true"></span><span>With regret, no</span></label>
+                  <p class="field__error" id="attendError" hidden>Please choose an answer.</p>
                 </fieldset>
-
                 <div class="field" id="guestsField">
                   <label for="guestCount">Number of guests</label>
-                  <div class="stepper">
-                    <button type="button" class="stepper__btn" id="guestMinus" aria-label="Fewer guests">−</button>
-                    <input id="guestCount" name="guests" type="number" inputmode="numeric" min="1" max="10" value="1" />
-                    <button type="button" class="stepper__btn" id="guestPlus" aria-label="More guests">+</button>
-                  </div>
+                  <div class="stepper"><button type="button" class="stepper__btn" id="guestMinus" aria-label="Fewer guests">−</button><input id="guestCount" name="guests" type="number" inputmode="numeric" min="1" max="10" value="1" /><button type="button" class="stepper__btn" id="guestPlus" aria-label="More guests">+</button></div>
                 </div>
-
-                <div class="field">
-                  <label for="guestMessage">A note for Siya <span class="optional">(optional)</span></label>
-                  <textarea id="guestMessage" name="message" rows="3" maxlength="300" placeholder="A little wish for the birthday girl"></textarea>
-                </div>
-
-                <p class="rsvp-note" id="rsvpNote"></p>
-
-                <div class="rsvp-actions">
-                  <button class="btn-primary" id="rsvpSubmit" type="submit">Send RSVP</button>
-                  <button class="btn-quiet" id="rsvpCopy" type="button" hidden>Copy RSVP message</button>
-                </div>
-
+                <div class="field"><label for="guestMessage">A note for Siya <span class="optional">(optional)</span></label><textarea id="guestMessage" name="message" rows="3" maxlength="300" placeholder="A little birthday wish"></textarea></div>
+                <p class="rsvp-note" id="rsvpNote" hidden></p>
+                <div class="rsvp__actions"><button class="button-primary" id="rsvpSubmit" type="submit">Send RSVP</button><button class="button-quiet" id="rsvpCopy" type="button" hidden>Copy message</button></div>
                 <p class="rsvp-status" id="rsvpStatus" role="status" aria-live="polite"></p>
-                <button class="rsvp-close" id="rsvpClose" type="button">Close</button>
+                <button class="rsvp__close" id="rsvpClose" type="button">Close response</button>
               </form>
             </div>
           </div>
-
-          <p class="rsvp__aside" data-reveal>With love, from our family to yours.</p>
-          <noscript>
-            <p class="noscript-note">Please enable JavaScript to open the RSVP form, or reply to the family directly.</p>
-          </noscript>
         </div>
+        <noscript><p class="noscript-note">JavaScript is needed to prepare a WhatsApp reply. Please contact Bobby or Snehal directly to respond.</p></noscript>
       </section>
 
-      <!-- ============ CLOSING ============ -->
-      <section class="section section--closing" id="closing" aria-labelledby="closing-title">
-        <div class="torn" aria-hidden="true"></div>
-        <div class="closing__art" aria-hidden="true">
-          <svg viewBox="0 0 400 640" preserveAspectRatio="xMidYMax slice" focusable="false"><use href="#garden-scene" /></svg>
-        </div>
-
-        <div class="section__inner">
-          <h2 class="closing__title" id="closing-title" data-reveal>We can't wait to<br />celebrate with you!</h2>
-          <p class="closing__line" data-reveal>Our little Siya's special day would be incomplete without you.</p>
-
-          <div class="closing__signature" data-reveal>
-            <span class="closing__with">With love,</span>
-            <span class="closing__names">Bobby &amp; Snehal Chilami</span>
+      <section class="closing section" id="closing" aria-labelledby="closing-title">
+        <img class="closing__wash" src="./src/assets/envelope/derived/seaside-wash.webp" alt="" aria-hidden="true" loading="lazy" />
+        <div class="closing__inner">
+          <div class="closing__art" data-reveal>
+            <img class="closing__cake" src="./src/assets/envelope/derived/cake.webp" alt="A small lemon cake decorated with flowers" loading="lazy" />
+            <img class="closing__umbrella" src="./src/assets/envelope/derived/umbrella.webp" alt="" aria-hidden="true" loading="lazy" />
+            <img class="closing__boat" src="./src/assets/envelope/derived/boat.webp" alt="" aria-hidden="true" loading="lazy" />
           </div>
-
-          <span class="butterfly-slot" data-butterfly="lemon" style="--b-size:32px;--b-x:89%;--b-y:1%;--b-dur:20s;--b-delay:-11s"></span>
-          <span class="butterfly-slot" data-butterfly="blush" style="--b-size:24px;--b-x:7%;--b-y:63%;--b-dur:23s;--b-delay:-2s"></span>
-
-          <div class="closing__actions" data-reveal>
-            <button class="chip" id="shareBtn" type="button">Share invitation</button>
-            <button class="chip" id="replayBtn" type="button">Replay opening</button>
-            <button class="chip" id="motionBtn" type="button" aria-pressed="false">Reduce motion</button>
+          <div class="closing__copy" data-reveal>
+            <span class="eyebrow">Until we meet</span>
+            <h2 class="display-title" id="closing-title">A little day.<br />A lifetime of love.</h2>
+            <p>We can’t wait to celebrate Siya with you.</p>
+            <p class="signature"><span>With love,</span><strong>Bobby &amp; Snehal Chilami</strong></p>
           </div>
-
-          <footer class="footer">
-            <p>Siya's First Birthday · 22 November 2026</p>
-            <p class="footer__small">Made with love for our little sunshine.</p>
-          </footer>
         </div>
+        <footer class="footer">
+          <span>SIYA · ONE</span>
+          <div class="footer__actions">
+            <button class="text-link" id="shareBtn" type="button">Share invitation</button>
+            <button class="text-link" id="replayBtn" type="button">Replay opening</button>
+            <button class="text-link" id="motionBtn" type="button" aria-pressed="false">Reduce motion</button>
+          </div>
+          <span>22 NOVEMBER 2026</span>
+        </footer>
       </section>
     </main>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <noscript><style>.no-js .skip-open,.no-js .cover__hint{display:none!important}.no-js #rsvpPanel{display:block!important}.no-js .rsvp__toggle{display:none!important}</style></noscript>
 </body>
 </html>

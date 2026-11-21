@@ -1,907 +1,811 @@
-/* ============================================================
-   Cover — a painted envelope tied with satin, unfolding into the
-   invitation card. Everything is layered paper.
-   ============================================================ */
+/* ==========================================================================
+   The opening: a full-screen painted envelope that physically unties and
+   opens, then lets the invitation card rise out of it.
+   Every element below is a real layer; nothing is a stitched animation frame.
+   ========================================================================== */
 
 .cover {
   position: relative;
-  height: 100svh;
-  min-height: 560px;
-  display: grid;
-  place-items: center;
+  min-height: 100svh;
   overflow: hidden;
+  background:
+    radial-gradient(100% 70% at 50% 18%, rgba(255, 252, 244, .9), transparent 70%),
+    radial-gradient(90% 60% at 50% 100%, rgba(197, 168, 128, .22), transparent 70%),
+    #efe2cd;
+  color: var(--ink);
   isolation: isolate;
-  background: #f3ece9;
+  --flap-tip: 53%;
+  --mouth-inset: 8%;
+  --mouth-end: 92%;
 }
 
-/* ---------- ambient painted scene ---------- */
-.cover__scene {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.scene__wash {
-  position: absolute;
-  inset: -8% -18% auto -18%;
-  height: 108%;
-  background:
-    radial-gradient(ellipse 48% 40% at 22% 12%, rgba(220, 236, 242, 0.95), transparent 70%),
-    radial-gradient(ellipse 44% 38% at 80% 10%, rgba(236, 229, 242, 0.9), transparent 72%),
-    radial-gradient(ellipse 54% 44% at 18% 84%, rgba(249, 236, 234, 0.95), transparent 72%),
-    radial-gradient(ellipse 46% 36% at 84% 88%, rgba(242, 212, 123, 0.16), transparent 70%),
-    linear-gradient(168deg, #f8f3ec 0%, #f4eef2 46%, #f6e9e6 100%);
-}
-
-.scene__grain {
-  position: absolute;
-  inset: 0;
-  background-image: var(--grain);
-  opacity: 0.16;
-  mix-blend-mode: multiply;
-}
-
-.scene__flora {
-  position: absolute;
-  height: auto;
-  overflow: visible;
-  opacity: 0.5;
-  filter: saturate(0.94);
-}
-
-.scene__flora--tl {
-  left: -12%;
-  top: -6%;
-  width: 46%;
-  max-width: 300px;
-  transform: rotate(-6deg);
-  opacity: 0.42;
-}
-
-.scene__flora--br {
-  right: -13%;
-  bottom: -9%;
-  width: 44%;
-  max-width: 280px;
-  transform: rotate(6deg);
-  opacity: 0.36;
-}
-
-.scene__vignette {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 80% 68% at 50% 46%, transparent 42%, rgba(94, 142, 163, 0.12) 100%),
-    linear-gradient(180deg, rgba(94, 142, 163, 0.05), transparent 16%, transparent 84%, rgba(169, 107, 88, 0.08));
-}
-
-/* ---------- skip ---------- */
-.skip-open {
-  position: absolute;
-  top: calc(18px + env(safe-area-inset-top));
-  right: 18px;
-  z-index: 70;
-  padding: 6px 2px 5px;
-  border-bottom: 1px solid rgba(166, 138, 95, 0.45);
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 8.5px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: rgba(63, 107, 124, 0.62);
-  transition: opacity 0.5s var(--ease-silk), color 0.3s, border-color 0.3s;
-}
-
-.skip-open:hover {
-  color: var(--sea-ink);
-  border-bottom-color: rgba(63, 107, 124, 0.6);
-}
-
-.cover.is-settled .skip-open {
-  opacity: 0;
-  /* visibility (not just opacity) so the label leaves no painted ghost
-     once the card has taken the stage */
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.cover.is-opening .skip-open {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s var(--ease-silk) 1.1s;
-}
-
-.cover.is-opening .env-tap-hint {
-  animation: none;
-  opacity: 0;
-}
-
-.cover.is-settled .env-tap-hint {
-  display: none;
-}
-
-/* ---------- stage ---------- */
 .stage {
   position: absolute;
   inset: 0;
-  z-index: 1;
   display: grid;
   place-items: center;
-  padding-bottom: 2vh;
-  perspective: 1500px;
-  perspective-origin: 50% 42%;
-}
-
-/* ---------- envelope ---------- */
-.env-float {
-  position: relative;
-  z-index: 3;
-  transform-style: preserve-3d;
-  animation: env-bob 9s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-
-.cover.is-opening .env-float,
-.cover.is-settled .env-float {
-  animation: none;
-}
-
-@keyframes env-bob {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, -7px, 0);
-  }
+  perspective: 1800px;
+  /* anchored on the hinge line so the flap's top edge never lifts off it */
+  perspective-origin: 50% 0%;
 }
 
 .envelope {
   position: relative;
-  width: min(92vw, 400px, 58vh);
-  aspect-ratio: 400 / 552;
-  transform-style: preserve-3d;
-  transform: rotateX(4deg) rotateZ(-1deg);
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 62%;
   will-change: transform;
 }
 
-.env-shadow {
+/* --- paper ---------------------------------------------------------------- */
+
+.env-back {
   position: absolute;
-  left: -2%;
-  right: -2%;
-  bottom: -8%;
-  height: 13%;
   z-index: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(63, 107, 124, 0.42), rgba(63, 107, 124, 0.08) 52%, transparent 74%);
-  filter: blur(16px);
-  transform: translateZ(-40px);
-}
-
-/* the pale liner revealed as the folds open */
-.env-inside {
-  position: absolute;
   inset: 0;
-  z-index: 1;
-  border-radius: 3px;
-  overflow: hidden;
-  background:
-    radial-gradient(ellipse 90% 60% at 50% 8%, rgba(255, 255, 255, 0.9), transparent 62%),
-    linear-gradient(178deg, #f6f0f7 0%, #eee5f1 52%, #e5d9ea 100%);
-  box-shadow: inset 0 0 0 1px rgba(185, 154, 107, 0.28);
-}
-
-.env-inside__liner {
-  position: absolute;
-  inset: 5.5%;
-  border: 1px solid rgba(185, 154, 107, 0.34);
-  border-radius: 2px;
-  background-image:
-    radial-gradient(circle at 20% 24%, rgba(94, 142, 163, 0.4) 0 1.7px, transparent 1.8px),
-    radial-gradient(circle at 72% 62%, rgba(169, 139, 178, 0.35) 0 1.5px, transparent 1.6px),
-    radial-gradient(ellipse 70% 44% at 50% 34%, rgba(255, 255, 255, 0.75), transparent 72%);
-  background-size: 28px 28px, 38px 38px, 100% 100%;
-  opacity: 0.95;
+  background-color: #f6ead6;
+  background-image: url("../assets/envelope/derived/paper.jpg");
+  background-position: center;
+  background-size: cover;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
-    inset 0 14px 26px -18px rgba(63, 107, 124, 0.45),
-    inset 0 -14px 26px -18px rgba(63, 107, 124, 0.3);
+    inset 0 0 90px rgba(122, 92, 56, .16),
+    inset 0 0 18px rgba(122, 92, 56, .08);
 }
 
-/* a faint monogram watermark on the lining */
-.env-inside__mark {
-  position: absolute;
-  left: 50%;
-  /* sits in the band above the painted pocket front, which covers the
-     lower triangle once the flaps are open */
-  top: 21%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-script);
-  font-size: clamp(62px, 19vw, 84px);
-  line-height: 1;
-  color: rgba(185, 154, 107, 0.3);
-  pointer-events: none;
-  user-select: none;
-}
-
-/* the pocket hollows out as the folds open */
-.env-inside__shade {
+.env-back__light {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(63, 107, 124, 0.34), transparent 22%),
-    linear-gradient(0deg, rgba(63, 107, 124, 0.22), transparent 20%),
-    linear-gradient(90deg, rgba(63, 107, 124, 0.2), transparent 14%, transparent 86%, rgba(63, 107, 124, 0.2)),
-    radial-gradient(ellipse 62% 46% at 50% 46%, rgba(255, 255, 255, 0.5), transparent 72%);
-  mix-blend-mode: multiply;
-  opacity: 0;
-  pointer-events: none;
+    radial-gradient(70% 50% at 50% 34%, rgba(255, 252, 243, .55), transparent 72%),
+    linear-gradient(180deg, rgba(120, 92, 58, .1), transparent 14%, transparent 82%, rgba(110, 82, 50, .16));
 }
 
-/* painted paper folds — four slices of the same continuous watercolour */
-.env-fold {
+.env-back__grain,
+.env-pocket__grain,
+.env-liner__grain,
+.invite__grain {
   position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .3;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.84' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* --- the painted inside of the envelope ----------------------------------- */
+
+.env-liner {
+  position: absolute;
+  z-index: 1;
+  inset: 0 2% 46% 2%;
+  overflow: hidden;
+  background: #c9dbe2;
+  box-shadow: inset 0 14px 26px rgba(52, 38, 22, .4);
+}
+
+.env-liner__scene {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 50% 46%;
+  filter: saturate(.9) contrast(1.02);
+}
+
+.env-liner__shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(48, 34, 19, .46), transparent 26%, transparent 74%, rgba(48, 34, 19, .22)),
+    linear-gradient(90deg, rgba(48, 34, 19, .2), transparent 18%, transparent 82%, rgba(48, 34, 19, .2));
+}
+
+.env-liner__grain { opacity: .18; }
+
+/* --- the card frame: clipped by the mouth of the envelope ----------------- */
+
+.env-card-frame {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  clip-path: polygon(var(--mouth-inset) 0%, var(--mouth-end) 0%, 50% var(--flap-tip));
+  will-change: clip-path;
+}
+
+.invite {
+  position: absolute;
+  left: calc(50% - var(--card-w, 100vw) / 2);
+  top: calc(50% - var(--card-h, 100svh) / 2);
+  width: var(--card-w, 100vw);
+  height: var(--card-h, 100svh);
+  color: var(--ink);
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.js .invite {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* --- the front panel of the envelope -------------------------------------- */
+
+.env-pocket {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  background-color: #f7ecd9;
+  background-image: url("../assets/envelope/derived/paper.jpg");
+  background-position: center;
+  background-size: cover;
+  clip-path: polygon(0% 0%, var(--mouth-inset) 0%, 50% var(--flap-tip), var(--mouth-end) 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.env-pocket::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    radial-gradient(80% 60% at 50% 84%, rgba(255, 253, 246, .5), transparent 70%),
+    linear-gradient(180deg, rgba(255, 252, 244, .34), transparent 22%, rgba(120, 90, 54, .13));
+}
+
+.env-pocket__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(86, 60, 32, .24), transparent 14%);
+}
+
+.env-pocket__grain { opacity: .34; }
+
+/* --- fold seams ----------------------------------------------------------- */
+
+.env-seams {
+  position: absolute;
+  z-index: 4;
   inset: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
-  filter: drop-shadow(0 1px 1px rgba(76, 70, 84, 0.1));
+  pointer-events: none;
+}
+
+.env-seams__line,
+.env-seams__stitch,
+.env-seams__thread,
+.env-seams__fold {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+
+/* a soft crease, a painted seam, a light stitch: together they hide the
+   hairline where the pocket meets the mouth of the envelope */
+.env-seams__line {
+  stroke: rgba(84, 126, 154, .42);
+  stroke-width: 4.2;
+  opacity: .5;
+}
+
+.env-seams__stitch {
+  stroke: rgba(57, 99, 131, .92);
+  stroke-width: 1.7;
+}
+
+.env-seams__thread {
+  stroke: rgba(255, 252, 243, .55);
+  stroke-width: .95;
+  stroke-dasharray: 4 5;
+}
+
+.env-seams__fold {
+  stroke: rgba(96, 134, 158, .5);
+  stroke-width: 1.1;
+  stroke-dasharray: 3 6;
+  opacity: .55;
+}
+
+/* --- the flap, hinged on the top edge ------------------------------------- */
+
+.env-flap {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--flap-tip);
+  transform-origin: 50% 0%;
+  transform-style: preserve-3d;
   will-change: transform;
+}
+
+.env-flap__inner,
+.env-flap__under {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
-.env-fold--bottom {
-  z-index: 4;
-  clip-path: polygon(0 100%, 50% 37.68%, 100% 100%);
-  transform-origin: 50% 100%;
+.env-flap__inner {
+  background-color: #f7ecd9;
+  background-image: url("../assets/envelope/derived/paper.jpg");
+  background-position: center 18%;
+  background-size: cover;
+  box-shadow: inset 0 -26px 34px rgba(112, 82, 48, .16);
 }
 
-.env-fold--left {
-  z-index: 5;
-  clip-path: polygon(0 0, 50% 37.68%, 0 100%);
-  transform-origin: 0% 50%;
-}
-
-.env-fold--right {
-  z-index: 6;
-  clip-path: polygon(100% 0, 50% 37.68%, 100% 100%);
-  transform-origin: 100% 50%;
-}
-
-.env-fold--top {
-  z-index: 7;
-  clip-path: polygon(0 0, 100% 0, 50% 37.68%);
-  transform-origin: 50% 0%;
-}
-
-/* a thin painted rim so the paper has an edge */
-.cover .envelope::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 8;
-  border: 1px solid rgba(185, 154, 107, 0.32);
-  box-shadow: inset 0 0 22px rgba(76, 70, 84, 0.08);
-  pointer-events: none;
-}
-
-/* ---------- satin ribbon ---------- */
-.ribbon {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  pointer-events: none;
-  filter: drop-shadow(0 2px 3px rgba(63, 107, 124, 0.22));
-}
-
-.ribbon__half {
-  position: absolute;
-  left: 50%;
-  width: 11.5%;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    90deg,
-    #9dc0d2 0%,
-    #b9d8e6 10%,
-    #d7edf7 25%,
-    #f0faff 40%,
-    #e4f4fb 53%,
-    #c6e0ec 72%,
-    #a9cadb 88%,
-    #93b9cc 100%
-  );
-  box-shadow:
-    inset 0 0 5px rgba(255, 255, 255, 0.55),
-    inset 2px 0 5px rgba(94, 142, 163, 0.14),
-    inset -2px 0 5px rgba(94, 142, 163, 0.18);
-}
-
-.ribbon__half--top {
-  top: 0;
-  height: 51.4%;
-  border-radius: 3px 3px 0 0;
-}
-
-.ribbon__half--bottom {
-  bottom: 0;
-  height: 51.4%;
-  border-radius: 0 0 3px 3px;
-}
-
-.ribbon__sheen {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 11.5%;
-  height: 100%;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    180deg,
-    transparent 16%,
-    rgba(255, 255, 255, 0.45) 31%,
-    rgba(255, 255, 255, 0.8) 37%,
-    rgba(255, 255, 255, 0.1) 46%,
-    transparent 54%
-  );
-  background-size: 100% 260%;
-  background-repeat: no-repeat;
-  animation: ribbon-sheen 7.5s ease-in-out 1.4s infinite;
-  mix-blend-mode: screen;
-  opacity: 0.8;
-}
-
-@keyframes ribbon-sheen {
-  0% {
-    background-position: 0 -120%;
-  }
-  38%,
-  100% {
-    background-position: 0 220%;
-  }
-}
-
-/* ---------- bow ---------- */
-.bow {
-  position: absolute;
-  left: 50%;
-  top: 51.4%;
-  z-index: 12;
-  width: 64%;
-  aspect-ratio: 240 / 168;
-  transform: translate(-50%, -50%);
-  display: grid;
-  place-items: center;
-  touch-action: manipulation;
-  border-radius: 50%;
-  filter: drop-shadow(0 5px 8px rgba(63, 107, 124, 0.28));
-}
-
-.bow::before {
-  content: "";
-  position: absolute;
-  inset: -22%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 66%);
-  animation: bow-halo 4.2s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes bow-halo {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(0.94);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.04);
-  }
-}
-
-.bow:hover::before {
-  opacity: 0.95;
-}
-
-.bow:focus-visible {
-  outline-offset: 8px;
-  outline-color: var(--sea-deep);
-}
-
-.bow__art {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.bow__loop,
-.bow__tail,
-.bow__knot {
-  transform-box: fill-box;
-  will-change: transform, opacity;
-}
-
-.bow__loop--l {
-  transform-origin: 88% 62%;
-}
-
-.bow__loop--r {
-  transform-origin: 12% 62%;
-}
-
-.bow__tail--l {
-  transform-origin: 84% 8%;
-}
-
-.bow__tail--r {
-  transform-origin: 16% 8%;
-}
-
-.bow__knot {
-  transform-origin: 50% 50%;
-}
-
-.bow__shade {
-  mix-blend-mode: multiply;
-}
-
-/* ---------- tap hint ---------- */
-.env-tap-hint {
-  position: absolute;
-  left: 50%;
-  bottom: calc(5.5% + env(safe-area-inset-bottom));
-  z-index: 12;
-  transform: translateX(-50%);
-  width: max-content;
-  max-width: 90vw;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 9px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: rgba(63, 107, 124, 0.66);
-  animation: hint-pulse 3.6s ease-in-out infinite;
-  transition: opacity 0.45s;
-}
-
-.env-tap-hint::before,
-.env-tap-hint::after {
-  content: "";
-  width: 22px;
-  height: 1px;
-  flex: none;
-  background: linear-gradient(90deg, transparent, rgba(185, 154, 107, 0.8));
-}
-
-.env-tap-hint::after {
-  background: linear-gradient(90deg, rgba(185, 154, 107, 0.8), transparent);
-}
-
-@keyframes hint-pulse {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.95;
-  }
-}
-
-/* ---------- bloom + petals ---------- */
-.bloom {
-  position: absolute;
-  left: 50%;
-  top: 44%;
-  z-index: 1;
-  width: 122%;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(
-    circle,
-    rgba(255, 250, 236, 0.95) 0%,
-    rgba(255, 235, 214, 0.5) 20%,
-    rgba(242, 212, 123, 0.14) 42%,
-    rgba(242, 212, 123, 0) 64%
-  );
-  mix-blend-mode: screen;
-  opacity: 0;
-  pointer-events: none;
-  will-change: opacity, transform;
-}
-
-.dust {
-  position: absolute;
-  inset: 0;
-  z-index: 9;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-/* ---------- invitation card ---------- */
-.invite {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  opacity: 0;
-  pointer-events: none;
-  will-change: transform, opacity;
-  filter: drop-shadow(0 22px 36px rgba(63, 107, 124, 0.18));
-}
-
-.cover.is-settled .invite {
-  pointer-events: auto;
-}
-
-.invite__paper {
+.env-flap__shade {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 118% 62% at 50% -8%, rgba(255, 255, 255, 0.96), transparent 62%),
-    radial-gradient(ellipse 82% 44% at 18% 28%, rgba(220, 236, 242, 0.55), transparent 70%),
-    radial-gradient(ellipse 70% 40% at 88% 18%, rgba(236, 229, 242, 0.7), transparent 72%),
-    radial-gradient(ellipse 92% 52% at 50% 108%, rgba(242, 216, 216, 0.6), transparent 72%),
-    linear-gradient(172deg, #fffaf2 0%, #fbf3ec 46%, #f7ecea 78%, #f5e9e8 100%);
+    linear-gradient(180deg, rgba(255, 252, 244, .34), transparent 28%),
+    radial-gradient(60% 50% at 50% 100%, rgba(110, 80, 46, .2), transparent 70%);
 }
 
-.invite__paper::after {
-  content: "";
+/* the flap catches less light as it tips away from us */
+.env-flap__lift {
   position: absolute;
   inset: 0;
-  background-image: var(--grain);
-  opacity: 0.18;
-  mix-blend-mode: multiply;
+  opacity: 0;
+  background:
+    linear-gradient(180deg, rgba(74, 54, 32, .3), rgba(74, 54, 32, .02) 42%, rgba(255, 252, 244, .2) 82%),
+    linear-gradient(90deg, rgba(74, 54, 32, .12), transparent 22%, transparent 78%, rgba(74, 54, 32, .12));
+}
+
+.env-flap__seam {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
 }
 
-.invite__frame {
+.env-flap__under {
+  transform: rotateY(180deg);
+  background: #c6dce8;
+  box-shadow: inset 0 0 40px rgba(38, 68, 88, .3);
+}
+
+.env-flap__lining {
   position: absolute;
-  inset: clamp(10px, 2.6vw, 16px);
-  z-index: 1;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, .38) 0 9px, transparent 9px 22px),
+    linear-gradient(180deg, #d9e9f2, #b7d3e2 60%, #c9dfea);
+}
+
+.env-flap__sprig {
+  position: absolute;
+  z-index: 2;
+  top: -7%;
+  left: 50%;
+  width: 44%;
+  max-width: none;
+  translate: -50% 0;
+  rotate: -1.5deg;
+  filter: drop-shadow(0 10px 12px rgba(78, 56, 30, .16));
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   pointer-events: none;
 }
 
-.frame-line {
+/* --- ribbon, bow, knot, seal ---------------------------------------------- */
+
+.env-tie {
   position: absolute;
-  border: 1px solid rgba(185, 154, 107, 0.5);
-  border-radius: 3px;
+  z-index: 7;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 941 / 520;
+  translate: 0 -50%;
+  pointer-events: none;
 }
 
-.frame-line--outer {
-  inset: 0;
-}
-
-.frame-line--inner {
-  inset: 7px;
-  border-color: rgba(185, 154, 107, 0.26);
-}
-
-.invite__corner {
+.env-tie img {
   position: absolute;
-  z-index: 1;
-  width: 37%;
-  max-width: 210px;
   height: auto;
-  opacity: 0.95;
+  max-width: none;
   pointer-events: none;
-  overflow: visible;
 }
 
-.invite__corner--tl {
-  left: -4%;
-  top: -3%;
-  transform: rotate(-4deg);
+.tie__band {
+  top: 30%;
+  width: 50%;
+  z-index: 0;
+  filter: drop-shadow(0 5px 5px rgba(70, 48, 26, .2));
 }
 
-.invite__corner--tr {
-  right: -4%;
-  top: -3%;
-  transform: scaleX(-1) rotate(-4deg);
+.tie__band--l { left: 0; }
+.tie__band--r { right: 0; }
+
+.tie__tail {
+  top: 62%;
+  width: 43.5%;
+  z-index: 0;
+  filter: drop-shadow(0 7px 7px rgba(70, 48, 26, .2));
 }
+
+.tie__tail--l { left: 5.5%; transform-origin: 85% 2%; }
+.tie__tail--r { right: 5.5%; transform-origin: 15% 2%; }
+
+.tie__bow {
+  top: 3.5%;
+  left: 50%;
+  width: 92%;
+  z-index: 2;
+  translate: -50% 0;
+  transform-origin: 50% 55%;
+  filter: drop-shadow(0 8px 8px rgba(70, 48, 26, .2));
+}
+
+.tie__knot {
+  position: absolute;
+  z-index: 1;
+  top: 29.5%;
+  left: 50%;
+  width: 23%;
+  aspect-ratio: 1.55;
+  translate: -50% 0;
+  border-radius: 46% 46% 40% 40%;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .34), transparent 26%, transparent 62%, rgba(12, 32, 48, .38)),
+    linear-gradient(90deg, #2b5677, #7ea9c7 20%, #3b6d90 46%, #8fb6d1 70%, #2b5677);
+  box-shadow: inset 0 0 12px rgba(16, 40, 58, .45);
+}
+
+.tie__glow {
+  position: absolute;
+  top: 27%;
+  left: 50%;
+  width: 32%;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 240, 198, .5), rgba(255, 228, 160, .12) 52%, transparent 68%);
+  opacity: .7;
+  animation: seal-breathe 5.2s ease-in-out infinite;
+}
+
+.tie__seal {
+  top: 29.5%;
+  left: 50%;
+  width: 23.2%;
+  translate: -50% 0;
+  filter: drop-shadow(0 4px 5px rgba(66, 44, 20, .34));
+  z-index: 3;
+}
+
+@keyframes seal-breathe {
+  0%, 100% { opacity: .5; scale: .94; }
+  50% { opacity: .9; scale: 1.04; }
+}
+
+/* --- interaction ---------------------------------------------------------- */
+
+.env-trigger {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.env-trigger:focus-visible {
+  outline: 2px solid var(--coast);
+  outline-offset: -10px;
+}
+
+.cover__hint {
+  position: absolute;
+  z-index: 21;
+  left: 50%;
+  bottom: max(1.15rem, env(safe-area-inset-bottom));
+  margin: 0;
+  padding: .5rem 1rem .55rem;
+  translate: -50% 0;
+  color: rgba(52, 64, 66, .82);
+  background: rgba(255, 250, 240, .55);
+  backdrop-filter: blur(3px);
+  font-size: clamp(.55rem, 1.6vw, .66rem);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 1px 0 rgba(110, 84, 52, .12);
+}
+
+.skip-open {
+  position: absolute;
+  z-index: 22;
+  top: max(1rem, env(safe-area-inset-top));
+  right: clamp(1rem, 3vw, 2rem);
+  padding: .62rem .9rem;
+  border: 1px solid rgba(52, 94, 117, .38);
+  color: var(--coast);
+  background: rgba(255, 250, 240, .66);
+  backdrop-filter: blur(6px);
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.skip-open:hover { background: rgba(255, 250, 240, .95); }
+
+.is-settled .cover__hint,
+.is-settled .skip-open {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   The invitation card
+   ========================================================================== */
+
+.invite__paper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: clamp(1.3rem, 4vmin, 2.6rem);
+  overflow: hidden;
+  background-color: #faf0dd;
+  background-image:
+    radial-gradient(80% 60% at 78% 14%, rgba(255, 253, 246, .72), transparent 66%),
+    radial-gradient(56% 46% at 10% 97%, rgba(220, 197, 161, .22), transparent 62%),
+    url("../assets/envelope/derived/paper.jpg");
+  background-size: auto, auto, cover;
+  box-shadow: 0 40px 90px rgba(52, 36, 18, .34);
+  color: var(--ink);
+}
+
+.invite__grain { opacity: .34; }
+
+.invite__rule {
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid rgba(69, 112, 140, .5);
+}
+
+.invite__rule--outer { inset: clamp(.85rem, 2.6vmin, 1.6rem); }
+.invite__rule--inner { inset: calc(clamp(.85rem, 2.6vmin, 1.6rem) + 4px); border-color: rgba(69, 112, 140, .26); border-width: 1px; }
 
 .invite__sprig {
   position: absolute;
-  z-index: 1;
-  width: 33%;
-  max-width: 180px;
   height: auto;
-  opacity: 0.72;
   pointer-events: none;
-  overflow: visible;
+  user-select: none;
 }
 
-.invite__sprig--l {
-  left: -7%;
-  bottom: -3%;
-  transform: rotate(8deg);
+.invite__sprig--lemon {
+  top: -2%;
+  left: -4%;
+  width: clamp(7.5rem, 17vmin, 13rem);
+  rotate: -8deg;
+  filter: drop-shadow(0 8px 10px rgba(92, 66, 34, .12));
 }
 
-.invite__sprig--r {
-  right: -7%;
-  bottom: -2%;
-  transform: scaleX(-1) rotate(6deg);
-  opacity: 0.6;
+.invite__sprig--bougainvillea {
+  right: -6%;
+  bottom: 6%;
+  width: clamp(7rem, 17vmin, 12rem);
+  opacity: .92;
+  rotate: 6deg;
+  filter: drop-shadow(0 8px 12px rgba(92, 66, 34, .1));
 }
 
-.invite__inner {
+.invite__sprig--olive {
+  left: -3%;
+  bottom: 2%;
+  width: clamp(5rem, 11vmin, 8rem);
+  opacity: .8;
+  rotate: 12deg;
+}
+
+.invite__body {
   position: relative;
-  z-index: 3;
+  z-index: 2;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
-  padding: clamp(44px, 8vh, 70px) clamp(30px, 8.6vw, 48px) clamp(18px, 3.4vh, 28px);
+  gap: clamp(.5rem, 1.6vmin, 1rem);
+  width: min(100%, 40rem);
+  margin: 0 auto;
+  padding: clamp(3rem, 9vmin, 5.5rem) clamp(.6rem, 3vw, 2rem) clamp(2rem, 5vmin, 3rem);
   text-align: center;
 }
 
-.eyebrow--cover {
-  font-size: clamp(8.5px, 2.3vw, 9.5px);
-  letter-spacing: 0.34em;
-  color: var(--terra-deep);
-}
-
-.name {
-  position: relative;
-  margin: 0.06em 0 0;
-  padding: 0.04em 0.12em 0.08em;
-  font-family: var(--font-script);
-  font-weight: 400;
-  font-size: clamp(82px, 27vw, 124px);
-  line-height: 0.8;
-  letter-spacing: 0.005em;
-  color: var(--sea-ink);
-  text-shadow: 0 2px 14px rgba(63, 107, 124, 0.16);
-}
-
-.name__text {
-  position: relative;
-  display: inline-block;
-}
-
-.name__shine {
-  position: absolute;
-  inset: 0;
-  display: block;
-  background: linear-gradient(
-    100deg,
-    rgba(185, 154, 107, 0) 30%,
-    rgba(255, 250, 226, 0.95) 46%,
-    rgba(185, 154, 107, 0) 60%
-  );
-  background-size: 320% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  pointer-events: none;
-  opacity: 0.75;
-  animation: name-sheen 8s var(--ease-silk) 2.4s infinite;
-}
-
-@keyframes name-sheen {
-  0% {
-    background-position: 130% 0;
-  }
-  38%,
-  100% {
-    background-position: -60% 0;
-  }
-}
-
-.cover__turning {
-  font-family: var(--font-hand);
-  font-size: clamp(34px, 9.4vw, 46px);
-  line-height: 1;
-  letter-spacing: 0.015em;
-  color: var(--lavender-deep);
-  margin-top: clamp(2px, 0.6vh, 6px);
-}
-
-/* small painted cameo of the coast, like a postcard pasted on the card */
-.cover__cameo {
-  position: relative;
-  width: 54%;
-  max-width: 200px;
-  aspect-ratio: 4 / 4.7;
-  max-height: 24vh;
-  margin-top: clamp(10px, 2vh, 18px);
-  padding: 4px;
-  background: #fffdf8;
-  border: 1px solid rgba(185, 154, 107, 0.55);
-  border-radius: 999px 999px 4px 4px;
-  box-shadow: 0 10px 22px -16px rgba(63, 107, 124, 0.6);
-  overflow: hidden;
-}
-
-.cover__cameo svg {
-  width: 100%;
-  height: 100%;
-  border-radius: 999px 999px 2px 2px;
-  overflow: hidden;
-  /* graceful stand-in if the painted sprite has not loaded */
-  background: linear-gradient(180deg, #cde3ef 0%, #eae2ee 44%, #f8ece2 58%, #9fc8d8 60%, #74a6ba 86%, #e9dccd 100%);
-}
-
-.cover__copy {
-  margin-top: clamp(11px, 2.2vh, 20px);
-  max-width: 30ch;
-  font-size: clamp(11.5px, 3.05vw, 13px);
-  line-height: 1.8;
-  color: var(--ink-soft);
-}
-
-.cover__copy p + p {
-  margin-top: 0.4em;
-}
-
-.cover__copy em {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.14em;
-  color: var(--sea-ink);
-}
-
-.cover__date {
-  display: grid;
-  justify-items: center;
-  gap: clamp(3px, 0.7vh, 6px);
-  margin-top: clamp(12px, 2.6vh, 22px);
-}
-
-.cover__day {
-  font-family: var(--font-display);
+.invite__kicker {
+  margin: 0;
+  color: var(--sea);
+  font-size: clamp(.56rem, 1.25vw, .72rem);
   font-weight: 500;
-  font-size: 9px;
-  letter-spacing: 0.38em;
+  letter-spacing: .32em;
   text-transform: uppercase;
-  color: var(--terra-deep);
 }
 
-.cover__date-line {
+.invite__title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  color: var(--coast);
+  font-family: var(--display);
+  font-weight: 300;
+  line-height: .8;
+}
+
+.invite__name {
+  font-size: clamp(4.3rem, 17.6vw, 9.6rem);
+  letter-spacing: -.045em;
+  line-height: .74;
+  text-transform: uppercase;
+}
+
+.invite__turns {
+  margin-top: clamp(.35rem, 1.4vmin, .8rem);
+  color: var(--terra);
+  font-family: var(--display);
+  font-size: clamp(1.25rem, 3.4vw, 2rem);
+  font-style: italic;
+  letter-spacing: .01em;
+  line-height: 1;
+}
+
+.invite__turns em {
+  color: var(--sea);
+  font-size: 1.42em;
+  font-style: italic;
+}
+
+.invite__line {
+  max-width: 21rem;
+  margin: clamp(.7rem, 2vmin, 1.1rem) 0 0;
+  color: #5f5a50;
+  font-family: var(--display);
+  font-size: clamp(.95rem, 1.35vw, 1.2rem);
+  line-height: 1.36;
+}
+
+.invite__details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .1rem;
+  margin-top: clamp(.6rem, 1.8vmin, 1rem);
+  padding-top: clamp(.7rem, 2vmin, 1.1rem);
+  border-top: 1px solid rgba(69, 112, 140, .28);
+}
+
+.invite__date {
+  margin: 0;
+  color: var(--coast);
+  font-size: clamp(.6rem, 1.1vw, .72rem);
+  font-weight: 500;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.invite__time {
+  margin: .35rem 0 0;
+  color: var(--coast);
+  font-family: var(--display);
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+  line-height: 1;
+}
+
+.invite__time small {
+  font-family: var(--sans);
+  font-size: .4em;
+  letter-spacing: .14em;
+}
+
+.invite__venue {
+  margin: .45rem 0 0;
+  color: #5f5a50;
+  font-size: clamp(.66rem, 1vw, .78rem);
+  font-style: normal;
+  line-height: 1.62;
+}
+
+.invite__venue strong {
+  display: block;
+  color: var(--coast);
+  font-family: var(--display);
+  font-size: 1.45em;
+  font-weight: 500;
+  letter-spacing: .01em;
+}
+
+.invite__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem clamp(.7rem, 2vw, 1.1rem);
+  margin-top: clamp(.8rem, 2.2vmin, 1.2rem);
+}
+
+.invite__cta,
+.invite__ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: 2.75rem;
+  padding: .7rem 1.15rem;
+  border: 1px solid var(--coast);
+  font-size: clamp(.58rem, .95vw, .68rem);
+  font-weight: 500;
+  letter-spacing: .13em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+
+.invite__cta {
+  color: var(--ivory);
+  background: var(--coast);
+  box-shadow: 0 8px 18px rgba(52, 94, 117, .24);
+}
+
+.invite__cta:hover { background: #284b61; transform: translateY(-1px); }
+
+.invite__ghost {
+  color: var(--coast);
+  background: rgba(255, 251, 242, .5);
+}
+
+.invite__ghost:hover { background: rgba(255, 251, 242, .92); }
+.invite__ghost span { font-size: 1.05em; }
+
+.invite__hosts {
+  margin: clamp(.75rem, 2vmin, 1.1rem) 0 0;
+  color: var(--muted);
+  font-family: var(--display);
+  font-size: clamp(.8rem, 1.15vw, .98rem);
+  font-style: italic;
+  letter-spacing: .02em;
+}
+
+.invite__nav {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
-  gap: 11px;
+  justify-content: center;
+  gap: clamp(.9rem, 3.4vw, 2.4rem);
+  padding: clamp(.5rem, 1.6vmin, .9rem) 0 clamp(.15rem, .6vmin, .4rem);
 }
 
-.date-rule {
-  display: block;
-  width: 26px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(185, 154, 107, 0.85));
-}
-
-.cover__date-line .date-rule:last-child {
-  background: linear-gradient(90deg, rgba(185, 154, 107, 0.85), transparent);
-}
-
-.cover__date-value {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(20px, 5.7vw, 25px);
-  letter-spacing: 0.05em;
-  color: var(--sea-ink);
-  white-space: nowrap;
-}
-
-.cover__time {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 11px;
-  letter-spacing: 0.22em;
+.invite__nav a {
+  color: var(--sea);
+  font-size: clamp(.53rem, .82vw, .62rem);
+  letter-spacing: .16em;
+  text-decoration: none;
   text-transform: uppercase;
-  color: var(--ink-muted);
 }
 
-.scroll-hint {
-  display: grid;
-  justify-items: center;
-  gap: 6px;
-  margin-top: clamp(10px, 2.4vh, 22px);
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 8.5px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(63, 107, 124, 0.58);
-}
+.invite__nav a:hover { color: var(--coast); }
 
-.scroll-hint svg {
-  width: 13px;
-  height: 19px;
-  animation: hint-bob 2.8s ease-in-out infinite;
-}
+.invite__scroll { display: inline-flex; align-items: center; gap: .35rem; }
+.invite__scroll span { font-size: 1rem; transition: transform .2s ease; }
+.invite__scroll:hover span { transform: translateY(3px); }
 
-@keyframes hint-bob {
-  0%,
-  100% {
-    transform: translateY(-2px);
-    opacity: 0.55;
+.js .invite__reveal { will-change: transform, opacity; }
+
+/* ==========================================================================
+   Desktop: the envelope stays the hero, just re-proportioned
+   ========================================================================== */
+
+@media (min-width: 760px) {
+  .envelope {
+    width: min(88svh, 800px);
+    height: min(96svh, 920px);
+    filter: drop-shadow(0 44px 78px rgba(72, 50, 26, .3));
   }
-  50% {
-    transform: translateY(4px);
-    opacity: 1;
+
+  .env-back { box-shadow: inset 0 0 80px rgba(122, 92, 56, .14); }
+
+  .cover::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background:
+      radial-gradient(46% 60% at 50% 44%, rgba(255, 252, 244, .5), transparent 72%),
+      radial-gradient(120% 90% at 50% 50%, transparent 40%, rgba(160, 128, 88, .16));
+    pointer-events: none;
+  }
+
+  .invite__paper { padding: clamp(1.6rem, 3vmin, 2.6rem); }
+
+  .invite__body {
+    width: min(100%, 44rem);
+    gap: clamp(.7rem, 1.4vmin, 1.1rem);
+    padding: clamp(3.5rem, 8vmin, 5rem) 2rem clamp(2.4rem, 5vmin, 3.4rem);
+  }
+
+  .invite__name { font-size: clamp(6rem, 15vmin, 9.8rem); }
+  .invite__turns { font-size: clamp(1.7rem, 3.4vmin, 2.3rem); }
+  .invite__line { max-width: 26rem; font-size: clamp(1.05rem, 1.9vmin, 1.3rem); }
+  .invite__date { font-size: .72rem; }
+  .invite__time { font-size: 2.3rem; }
+  .invite__venue { font-size: .84rem; }
+  .invite__actions { gap: .8rem 1.1rem; }
+  .invite__sprig--lemon { width: clamp(10rem, 21vmin, 15rem); left: 2%; top: 2%; }
+  .invite__sprig--bougainvillea { width: clamp(10rem, 21vmin, 15rem); right: 4%; bottom: 13%; }
+  .invite__sprig--olive { width: clamp(6.5rem, 13vmin, 9rem); left: 3%; bottom: 4%; }
+}
+
+@media (max-width: 759px) {
+  .envelope { width: 100%; height: 100svh; }
+
+  .invite__body {
+    gap: .35rem;
+    padding: clamp(3.4rem, 11vmin, 4.4rem) .35rem clamp(1.6rem, 5vmin, 2.4rem);
+  }
+
+  .invite__name { font-size: clamp(4.5rem, 23vw, 6.6rem); }
+  .invite__turns { font-size: clamp(1.4rem, 5.8vw, 1.8rem); }
+  .invite__line { max-width: 18rem; font-size: 1rem; margin-top: .85rem; }
+  .invite__details { margin-top: .5rem; padding-top: .65rem; }
+  .invite__date { font-size: .56rem; letter-spacing: .13em; }
+  .invite__time { font-size: 1.75rem; }
+  .invite__venue { font-size: .64rem; line-height: 1.6; }
+  .invite__venue strong { font-size: 1.4em; }
+  .invite__actions { gap: .5rem; margin-top: .7rem; }
+  .invite__cta, .invite__ghost { min-height: 2.6rem; padding: .6rem .85rem; font-size: .55rem; }
+  .invite__hosts { font-size: .78rem; margin-top: .6rem; }
+  .invite__rule--outer { inset: .85rem; }
+  .invite__rule--inner { inset: calc(.85rem + 4px); }
+  .invite__sprig--lemon { width: 7.4rem; top: -.6rem; left: -1.4rem; }
+  .invite__sprig--bougainvillea { width: 6.6rem; right: -1.3rem; bottom: 3.6rem; opacity: .82; }
+  .invite__sprig--olive { width: 4.6rem; left: -1rem; bottom: 1.2rem; opacity: .7; }
+  .invite__nav { gap: .85rem; padding-top: .35rem; }
+  .invite__nav a { font-size: .5rem; letter-spacing: .1em; }
+  .cover__hint { font-size: .52rem; letter-spacing: .11em; }
+
+  /* the lemon branch peers in at the top centre, so the skip control sits left */
+  .skip-open {
+    top: .55rem;
+    right: auto;
+    left: .55rem;
+    padding: .4rem .55rem;
+    border-color: rgba(52, 94, 117, .26);
+    background: rgba(255, 250, 240, .48);
+    font-size: .48rem;
+    letter-spacing: .1em;
   }
 }
 
-/* ============================================================
-   No-JS / failed-JS static fallback
-   ============================================================ */
-html:not(.js) .stage,
-html.no-js .stage {
-  position: static !important;
-  display: block !important;
-  inset: auto !important;
-  padding: 0 !important;
-  perspective: none !important;
+@media (max-height: 700px) and (max-width: 759px) {
+  .invite__body { padding-top: 2.9rem; padding-bottom: 1rem; }
+  .invite__line { display: none; }
+  .invite__sprig--bougainvillea { display: none; }
 }
 
-html:not(.js) .env-float,
-html.no-js .env-float,
-html:not(.js) .env-tap-hint,
-html.no-js .env-tap-hint,
-html:not(.js) .bloom,
-html.no-js .bloom,
-html:not(.js) .dust,
-html.no-js .dust,
-html:not(.js) .skip-open,
-html.no-js .skip-open,
-html:not(.js) .butterfly-slot,
-html.no-js .butterfly-slot,
-html:not(.js) .scroll-hint,
-html.no-js .scroll-hint {
-  display: none !important;
+/* --- reduced motion: a still, complete invitation -------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .tie__glow { animation: none; }
 }
 
-html:not(.js) .cover,
-html.no-js .cover {
-  height: auto !important;
-  min-height: 0 !important;
-  padding: 0 !important;
-  overflow: visible !important;
-}
-
-html:not(.js) .invite,
-html.no-js .invite {
-  position: relative !important;
-  inset: auto !important;
-  width: 100% !important;
-  opacity: 1 !important;
-  transform: none !important;
-  filter: none !important;
-  clip-path: none !important;
-  pointer-events: auto !important;
-}
-
-html:not(.js) .invite__inner,
-html.no-js .invite__inner {
-  min-height: 0 !important;
-  padding: 64px 32px 40px !important;
-}
-
-html:not(.js) .rsvp-panel,
-html.no-js .rsvp-panel {
-  display: none !important;
-}
-
-html:not(.js) .noscript-note,
-html.no-js .noscript-note {
-  display: block !important;
-  margin-top: 18px;
-  font-size: 12px;
-  color: var(--ink-muted);
-  text-align: center;
-}
-
-/* Keep the date legible without JS. */
-html:not(.js) .countdown__digit,
-html.no-js .countdown__digit {
-  opacity: 1 !important;
+@media (prefers-reduced-motion: reduce) {
+  .js .cover:not(.is-opening) .env-tie,
+  .js .cover:not(.is-opening) .env-flap {
+    transition: none;
+  }
 }

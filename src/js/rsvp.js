@@ -1,4 +1,4 @@
-import gsap from "gsap";
+import gsap from "gsap/dist/gsap.js";
 import { RSVP_WHATSAPP_NUMBER, EVENT } from "../config.js";
 
 const MAX_GUESTS = 10;
@@ -223,11 +223,20 @@ export function initRsvp({ toast } = {}) {
     }
 
     const url = buildWhatsAppUrl(message);
-    const win = window.open(url, "_blank", "noopener,noreferrer");
-    status.textContent = win
-      ? "Opening WhatsApp with your reply. If it does not open, copy the message below."
-      : "Your browser blocked the WhatsApp window. Copy the message below and send it to the family.";
-    if (!win) toast?.("Pop-up blocked — copy your RSVP message instead.");
+    let opened = false;
+    try {
+      const win = window.open(url, "_blank");
+      if (win) {
+        win.opener = null;
+        opened = true;
+      }
+    } catch {
+      opened = false;
+    }
+    status.textContent = opened
+      ? "WhatsApp opened with your reply draft. Choose Send in WhatsApp to share it; if it does not open, copy the message below."
+      : "Your browser blocked the WhatsApp window. Copy the message below and send it in WhatsApp.";
+    if (!opened) toast?.("WhatsApp was blocked — copy your RSVP message instead.");
   });
 
   copyBtn.addEventListener("click", async () => {

@@ -8,7 +8,9 @@ Hosted by Bobby Chilami and Snehal Chilami.
 **Repository:** https://github.com/bobbychilami/Siya-BDay
 
 Vanilla HTML5, CSS3 and ES modules on Vite, animated with GSAP + ScrollTrigger.
-All botanical artwork is original generated SVG; the dust motes are Canvas 2D.
+The envelope is cut from the supplied watercolour pack into real, separately animated layers
+(paper, coastal liner, flap, ribbon, bow, wax seal, invitation card); the botanical props are the
+same paintings keyed onto transparency. Ambient dust motes are Canvas 2D.
 
 > **This branch — `experiment/italian-coast-birthday` — is an alternative art direction, not the
 > published invitation.** It re-imagines the same event as a hand-painted Italian-Riviera
@@ -16,6 +18,45 @@ All botanical artwork is original generated SVG; the dust motes are Canvas 2D.
 > arched cameo, and powder blue / blush / lemon paper. `main` still holds the approved version and
 > this branch is not merged or deployed. Event facts, the RSVP flow and the deployment setup are
 > identical to `main`; only the visual and motion layer differs.
+
+## The opening, layer by layer
+
+The cover is one full-bleed envelope, not a picture of one. Every part that moves is its own
+element, stacked in this order (all inside `#envelope`):
+
+| Layer | Element | Motion |
+| --- | --- | --- |
+| paper body | `.env-back` + `.env-back__light` | static, holds the light |
+| coastal liner | `.env-liner` (clipped to the mouth) | revealed as the flap lifts |
+| card stage | `#cardFrame` → `.invite` | clipped to the mouth, then released |
+| pocket | `.env-pocket` + stitched `.env-seams` | static front wall of the envelope |
+| flap | `#flap` (`rotateX`, hinge at the top edge, `preserve-3d`) | lifts, tips back, fades |
+| ribbon | `.tie__band--l/--r`, `.tie__bow`, `.tie__knot`, `.tie__tail--l/--r` | loosens, slides out, falls away |
+| wax seal | `#waxSeal` | cracks free, tumbles off |
+| trigger | `#envelopeTrigger` | the single tap/click/Enter target |
+
+`src/js/envelope.js` builds the GSAP timeline (~4.5 s): press → seal release → bow and knot let go
+→ tails fall → flap swings back on its real hinge → the card rises out of the mouth, straightens
+and is released from the clip → it expands to fill the screen → it settles. All timings overlap;
+nothing is a frame swap and no GIF is used.
+
+`src/js/intro.js` owns the state: scroll lock, the skip button, the 10 s watchdog, the
+session-storage "already opened" flag and the replay button. Reduced motion and a missing
+GSAP both fall back to `settleInstantly()`.
+
+### Assets
+
+```
+src/assets/envelope/source/     the supplied PNGs, untouched (not published)
+src/assets/envelope/storyboard/ the reference contact sheets, untouched (not published)
+src/assets/envelope/derived/    web layers actually shipped (~490 KB total)
+tools/prepare-envelope-assets.py  reproducible pipeline: cut, key, trim, flatten, WebP
+```
+
+The pipeline keys the painted ribbon/bow/seal off the cream paper, splits the ribbon at the knot,
+flattens the paper wash into a tile-safe texture, trims every prop to its subject, recolours bare
+sheet inside a prop to the card paper tone and writes WebP (lossy q93) for layers plus JPEG for
+the two photographic-scale images. Originals are never modified.
 
 ## Commands
 
@@ -73,17 +114,15 @@ and `SITE_URL` in one pass, then regenerate the OG image if the wording changes.
 
 ## Screenshot QA
 
-`tools/shoot.mjs` drives headless Chrome over the DevTools protocol — no extra dependencies.
+`tools/shoot-cdp.mjs` drives Chrome over the DevTools protocol — no extra dependencies.
 
 ```bash
-node tools/shoot.mjs --w=390 --h=844 --out=shots/cover.png
-node tools/shoot.mjs --w=390 --h=844 --click="#skipOpen" --scroll=3461 --out=shots/rsvp.png
-node tools/shoot.mjs --w=1440 --h=900 --dpr=1 --out=shots/desktop.png
-node tools/shoot.mjs --nojs --out=shots/no-js.png          # JavaScript disabled
-node tools/shoot.mjs --reduced --out=shots/reduced.png     # prefers-reduced-motion
-node tools/shoot.mjs --focus="#bow" --key=Enter            # keyboard activation
-node tools/shoot.mjs --click="#skipOpen" --reload          # session persistence
-node tools/shoot.mjs --js="…" --eval="…"                   # scriptable checks
+node tools/shoot-cdp.mjs --w=390  --h=844 --settle=700 --out=shots/initial-390.jpg
+node tools/shoot-cdp.mjs --w=390  --h=844 --click="#envelopeTrigger" --seq "4600" --out=shots/card-390.jpg
+node tools/shoot-cdp.mjs --w=1440 --h=900 --click="#envelopeTrigger" --seq "4600" --out=shots/card-1440.jpg
+node tools/shoot-cdp.mjs --nojs    --out=shots/no-js.jpg     # JavaScript disabled
+node tools/shoot-cdp.mjs --reduced --out=shots/reduced.jpg   # prefers-reduced-motion
+node tools/shoot-cdp.mjs --probe --walk                      # metrics + overflow walk
 ```
 
 To freeze the opening for a still, click the bow and pause the exposed timeline:
@@ -101,6 +140,7 @@ It reports console errors/warnings and page metrics (`scrollWidth` vs `innerWidt
 ## Regenerating artwork and social images
 
 ```bash
+python tools/prepare-envelope-assets.py   # rebuilds src/assets/envelope/derived/
 node tools/gen-coast.mjs     # rewrites src/js/coast.generated.js
 ```
 
@@ -119,8 +159,9 @@ the page; it is not a photograph or a claim about how Hotel Raviraj looks.
 - Skip link, native buttons for every control, visible focus rings.
 - `prefers-reduced-motion` is honoured automatically, with a persisted “Reduce motion” toggle.
 - The opening is skippable and remembered per tab session.
-- Without JavaScript the invitation renders as a plain static card; the RSVP panel points
-  guests to the family instead.
+- Without JavaScript the envelope layers are hidden and the invitation renders as a plain,
+  fully readable static card (`.no-js` rules in `base.css`).
+- Enter/Space open the envelope from the keyboard; the skip and replay controls are buttons.
 
 ## Deployment
 

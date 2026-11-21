@@ -1,196 +1,155 @@
-import gsap from "gsap";
+import gsap from "gsap/dist/gsap.js";
+
+const byId = (id) => document.getElementById(id);
+const pick = (selector) => document.querySelector(selector);
 
 /**
- * The opening choreography — one continuous paper performance.
- *
- *   untie  · bow releases, ribbon slides off the painted envelope
- *   unfold · side folds swing open, then the top flap
- *   rise   · the ivory invitation edges up out of the pocket
- *   settle · the envelope recedes and the card takes the stage
- *
- * Built lazily on first open so the resting state is pure CSS.
+ * Every moving part of the opening. The envelope is built from separate paper,
+ * flap, ribbon, bow, tail, seal and liner layers, so each one gets its own
+ * transform; no still frame is ever swapped for another.
  */
-
-const q = (sel, root = document) => root.querySelector(sel);
-
 function refs() {
   return {
-    cover: document.getElementById("cover"),
-    envFloat: q(".env-float"),
-    envelope: document.getElementById("envelope"),
-    ribbon: document.getElementById("ribbon"),
-    ribbonTop: q(".ribbon__half--top"),
-    ribbonBottom: q(".ribbon__half--bottom"),
-    sheen: q(".ribbon__sheen"),
-    bow: document.getElementById("bow"),
-    knot: q(".bow__knot"),
-    loopL: q(".bow__loop--l"),
-    loopR: q(".bow__loop--r"),
-    tailL: q(".bow__tail--l"),
-    tailR: q(".bow__tail--r"),
-    top: document.getElementById("envTop"),
-    left: document.getElementById("envLeft"),
-    right: document.getElementById("envRight"),
-    bottom: document.getElementById("envBottom"),
-    invite: document.getElementById("invite"),
-    frame: document.getElementById("inviteFrame"),
-    corners: document.querySelectorAll(".invite__corner"),
-    sprigs: document.querySelectorAll(".invite__sprig"),
-    content: document.querySelectorAll(".invite__inner > *"),
-    tapHint: document.getElementById("tapHint"),
-    bloom: document.getElementById("bloom"),
-    inside: q(".env-inside"),
-    shade: q(".env-inside__shade"),
-    wrap: q(".bow__wrap"),
+    cover: byId("cover"),
+    envelope: byId("envelope"),
+    trigger: byId("envelopeTrigger"),
+    hint: byId("tapHint"),
+    skip: byId("skipOpen"),
+    flap: byId("flap"),
+    liner: pick(".env-liner"),
+    flapLift: pick(".env-flap__lift"),
+    linerScene: pick(".env-liner__scene"),
+    pocket: pick(".env-pocket"),
+    back: pick(".env-back"),
+    seams: pick(".env-seams"),
+    frame: byId("cardFrame"),
+    invite: byId("invite"),
+    bandL: pick(".tie__band--l"),
+    bandR: pick(".tie__band--r"),
+    tailL: pick(".tie__tail--l"),
+    tailR: pick(".tie__tail--r"),
+    bow: pick(".tie__bow"),
+    knot: pick(".tie__knot"),
+    glow: pick(".tie__glow"),
+    seal: byId("waxSeal"),
+    tie: byId("tie"),
   };
 }
 
-/**
- * Resting state for the envelope and the hidden card.
- * Called when the timeline is first built and again on replay.
- */
+/** Mirrors --flap-tip in intro.css; kept numeric so GSAP can tween the clip. */
+const MOUTH = "polygon(8% 0%, 92% 0%, 50% 53%)";
+const OPEN_CLIP = "polygon(-40% -40%, 140% -40%, 140% 140%, -40% 140%)";
+
+/** Put every layer back in its closed, resting state (also used by replay). */
 export function primeIntroStage() {
   const r = refs();
+  if (!r.envelope) return;
 
+  gsap.set(r.frame, { clipPath: MOUTH, zIndex: 2 });
+  gsap.set(r.tie, { autoAlpha: 1 });
   gsap.set(r.invite, {
-    opacity: 0,
-    yPercent: 30,
-    scale: 0.56,
-    clipPath: "inset(0% 0% 100% 0%)",
-    transformOrigin: "50% 32%",
-    pointerEvents: "none",
+    autoAlpha: 0,
+    scale: 0.36,
+    yPercent: 10,
+    rotate: -3.4,
+    transformOrigin: "50% 50%",
   });
-  gsap.set(r.frame, { opacity: 0 });
-
-  gsap.set(r.envFloat, { autoAlpha: 1, opacity: 1, y: 0, yPercent: 0, scale: 1, pointerEvents: "auto" });
-
-  gsap.set([r.top, r.left, r.right], { rotateX: 0, rotateY: 0, opacity: 1 });
-  gsap.set(r.shade, { opacity: 0 });
-  gsap.set(r.wrap, { opacity: 1 });
-  gsap.set([r.ribbonTop, r.ribbonBottom], { yPercent: 0, rotate: 0, opacity: 1 });
-  gsap.set(r.bow, { opacity: 1, scale: 1 });
-  gsap.set([r.loopL, r.loopR, r.tailL, r.tailR, r.knot], {
-    opacity: 1,
-    scale: 1,
+  gsap.set(r.flap, {
+    rotateX: 0,
+    rotateY: 0,
+    yPercent: 0,
+    autoAlpha: 1,
+    transformOrigin: "50% 0%",
+  });
+  gsap.set(r.flapLift, { opacity: 0 });
+  gsap.set([r.bandL, r.bandR, r.tailL, r.tailR, r.bow, r.seal], {
+    autoAlpha: 1,
+    xPercent: 0,
+    yPercent: 0,
     x: 0,
     y: 0,
-    rotate: 0,
+    rotation: 0,
+    scale: 1,
   });
-  gsap.set(r.sheen, { opacity: 0.9 });
-  gsap.set(r.bloom, { opacity: 0, scale: 1 });
-  gsap.set([r.corners, r.sprigs, r.content], { clearProps: "opacity,transform" });
+  gsap.set(r.knot, { scale: 1, autoAlpha: 1 });
+  gsap.set(r.glow, { autoAlpha: 1 });
+  gsap.set([r.pocket, r.back, r.seams, r.liner], { autoAlpha: 1 });
+  gsap.set(r.linerScene, { scale: 1 });
+  gsap.set(r.envelope, { scale: 1 });
+  gsap.set(r.trigger, { autoAlpha: 1, pointerEvents: "auto" });
+  gsap.set(r.hint, { autoAlpha: 1, y: 0 });
+  gsap.set(r.skip, { autoAlpha: 1, pointerEvents: "auto" });
 }
 
-export function buildIntroTimeline({ onIgnite, onSettle } = {}) {
+/** The full cinematic: untie → release → hinge → rise → settle. */
+export function buildIntroTimeline({ onSettle } = {}) {
   const r = refs();
-
   primeIntroStage();
 
-  const tl = gsap.timeline({
-    paused: true,
-    defaults: { ease: "power2.out" },
-    onComplete: () => onSettle?.(),
-  });
+  const tl = gsap.timeline({ paused: true, onComplete: () => onSettle?.() });
 
-  tl
-    /* ---------- A · the bow comes undone ---------- */
-    .addLabel("untie", 0)
-    .call(() => onIgnite?.(), null, 0.06)
-    .to(r.tapHint, { opacity: 0, duration: 0.35 }, 0.05)
-    .to(r.bow, { scale: 0.95, duration: 0.18, ease: "power2.in" }, 0)
-    .to(r.bow, { scale: 1, duration: 0.5, ease: "back.out(2)" }, 0.17)
-    .to(r.loopL, { x: -5, y: -2, rotate: -7, duration: 0.3 }, 0.08)
-    .to(r.loopR, { x: 5, y: -2, rotate: 7, duration: 0.3 }, 0.13)
-    .to(r.knot, { scale: 0.84, duration: 0.24, ease: "power2.inOut" }, 0.12)
+  // Stage 2 · the press, and the note that told the guest what to do
+  tl.to(r.envelope, { scale: 0.994, duration: 0.16, yoyo: true, repeat: 1, ease: "power1.inOut" }, 0)
+    .to(r.hint, { autoAlpha: 0, y: -6, duration: 0.45, ease: "power2.out" }, 0.02)
+    .to(r.skip, { autoAlpha: 0, duration: 0.3, ease: "power1.out", pointerEvents: "none" }, 0.05)
+    .to(r.glow, { autoAlpha: 0, duration: 0.4, ease: "power1.out" }, 0.1)
 
-    /* the loops pull tight and collapse into the knot */
-    .to(r.loopL, { x: 3, y: -3, rotate: 10, scale: 0.34, opacity: 0, duration: 0.5, ease: "power2.in" }, 0.44)
-    .to(r.loopR, { x: -3, y: -3, rotate: -10, scale: 0.34, opacity: 0, duration: 0.5, ease: "power2.in" }, 0.5)
-    .to(r.tailL, { y: -7, scale: 0.62, opacity: 0, duration: 0.48, ease: "power2.in" }, 0.56)
-    .to(r.tailR, { y: -7, scale: 0.62, opacity: 0, duration: 0.48, ease: "power2.in" }, 0.6)
-    .to(r.knot, { scale: 0.4, opacity: 0, duration: 0.4, ease: "power2.in" }, 0.62)
-    .to(r.wrap, { opacity: 0, duration: 0.4, ease: "power2.in" }, 0.66)
-    .to(r.bow, { opacity: 0, duration: 0.32 }, 0.98)
+    // the wax seal lifts, comes free and tumbles away
+    .to(r.seal, { yPercent: -7, rotate: "+=5", scale: 1.03, duration: 0.3, ease: "power2.out" }, 0.22)
+    .to(r.seal, { yPercent: 240, xPercent: 14, rotate: "+=58", scale: 0.72, autoAlpha: 0, duration: 0.82, ease: "power2.in" }, 0.54)
 
-    /* the ribbon slips away in two calm halves */
-    .to(r.sheen, { opacity: 0, duration: 0.3 }, 0.78)
-    .to(r.ribbonTop, { yPercent: -64, opacity: 0, duration: 0.85, ease: "power2.inOut" }, 0.78)
-    .to(r.ribbonBottom, { yPercent: 64, opacity: 0, duration: 0.85, ease: "power2.inOut" }, 0.84)
+    // the bow loses its tension, then slips off the paper
+    .to(r.bow, { scale: 1.035, yPercent: -3, rotate: -1.1, duration: 0.58, ease: "power2.out" }, 0.34)
+    .to(r.knot, { scale: 0.84, duration: 0.45, ease: "power2.inOut" }, 0.46)
+    .to(r.bow, { yPercent: 30, rotate: 1.6, autoAlpha: 0, duration: 0.72, ease: "power2.in" }, 1.02)
+    .to(r.knot, { scale: 0.7, autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 1.05)
 
-    /* ---------- B · the paper unfolds ---------- */
-    .addLabel("unfold", 1.55)
-    .to(r.envFloat, { y: 12, scale: 0.985, duration: 1.4, ease: "power2.inOut" }, 1.55)
-    .to(r.left, { rotateY: 72, opacity: 0, duration: 1.2, ease: "power2.inOut" }, 1.58)
-    .to(r.right, { rotateY: -72, opacity: 0, duration: 1.2, ease: "power2.inOut" }, 1.62)
-    .to(r.top, { rotateX: -84, duration: 1.15, ease: "power2.inOut" }, 1.72)
-    .to(r.shade, { opacity: 0.55, duration: 1.1 }, 1.6)
-    .to(r.bloom, { opacity: 0.26, duration: 0.9 }, 1.75)
+    // the tails swing from the knot and fall away
+    .to(r.tailL, { rotate: -9, xPercent: -4, yPercent: 4, duration: 0.55, ease: "power2.out" }, 0.4)
+    .to(r.tailR, { rotate: 9, xPercent: 4, yPercent: 4, duration: 0.55, ease: "power2.out" }, 0.4)
+    .to(r.tailL, { yPercent: 46, xPercent: -10, rotate: -27, autoAlpha: 0, duration: 0.85, ease: "power2.in" }, 0.9)
+    .to(r.tailR, { yPercent: 46, xPercent: 10, rotate: 27, autoAlpha: 0, duration: 0.85, ease: "power2.in" }, 0.94)
 
-    /* ---------- C · the invitation rises out of the pocket ---------- */
-    .addLabel("rise", 2.4)
-    .to(r.invite, { opacity: 1, duration: 0.01 }, 2.4)
-    .to(
-      r.invite,
-      {
-        yPercent: 0,
-        scale: 0.74,
-        clipPath: "inset(0% 0% 50% 0%)",
-        duration: 1.15,
-        ease: "power2.inOut",
-      },
-      2.45
-    )
-    .to(r.invite, { filter: "drop-shadow(0 26px 34px rgba(63,107,124,.22))", duration: 1.0 }, 2.45)
+    // the band unthreads from both sides
+    .to([r.bandL, r.bandR], { yPercent: 5, duration: 0.32, ease: "power1.out" }, 0.46)
+    .to(r.bandL, { xPercent: -15, yPercent: 16, autoAlpha: 0, duration: 0.75, ease: "power2.in" }, 0.86)
+    .to(r.bandR, { xPercent: 15, yPercent: 16, autoAlpha: 0, duration: 0.75, ease: "power2.in" }, 0.9)
 
-    /* ---------- D · the pocket steps aside, then the card settles ---------- */
-    .addLabel("settle", 3.5)
-    /* the envelope leaves *before* any copy is readable, so its liner
-       never ghosts across the invitation */
-    .to(r.envFloat, { opacity: 0, yPercent: 24, scale: 0.88, duration: 0.5, ease: "power2.in" }, 3.5)
-    .to(r.bloom, { opacity: 0, duration: 0.5 }, 3.55)
-    .to(
-      r.invite,
-      {
-        yPercent: 0,
-        scale: 1,
-        clipPath: "inset(0% 0% 0% 0%)",
-        duration: 1.2,
-        ease: "power3.out",
-      },
-      3.7
-    )
-    .to(r.frame, { opacity: 1, duration: 0.7 }, 2.95)
-    .from(r.corners, { opacity: 0, duration: 0.85, stagger: 0.09 }, 3.05)
-    .from(r.sprigs, { opacity: 0, duration: 0.9, stagger: 0.09 }, 4.15)
-    .from(r.content, { opacity: 0, y: 16, duration: 0.8, stagger: 0.06, ease: "power2.out" }, 4.05)
+    // Stage 3 · the flap hinges up and back on the top edge
+    .to(r.flap, { rotateX: -13, duration: 0.52, ease: "power2.out" }, 0.66)
+    .to(r.flapLift, { opacity: 0.9, duration: 0.9, ease: "power2.out" }, 0.72)
+    .to(r.flap, { rotateX: -104, duration: 1.05, ease: "power2.inOut" }, 1.14)
+    .to(r.flap, { autoAlpha: 0, duration: 0.4, ease: "power1.out" }, 2.06)
 
-    .to({}, { duration: 0.2 }, 5.55);
+    // the painted coast inside catches the light
+    .fromTo(r.linerScene, { scale: 1.07 }, { scale: 1, duration: 1.5, ease: "power2.out" }, 1.15)
 
-  tl.add(() => {
-    if (r.envFloat) r.envFloat.style.pointerEvents = "none";
-  }, 4.0);
+    // Stage 4 · the card rises out of the mouth
+    .set(r.invite, { autoAlpha: 1 }, 1.46)
+    .to(r.invite, { yPercent: -39, scale: 0.36, rotate: -1.2, duration: 1.16, ease: "power2.inOut" }, 1.5)
+
+    // Stage 5 · it clears the pocket, comes forward and fills the view. The card
+    // is fully outside the mouth at this instant, so releasing the clip is invisible.
+    .set(r.frame, { zIndex: 13, clipPath: OPEN_CLIP }, 2.64)
+    .to(r.invite, { yPercent: 0, scale: 1, rotate: 0, duration: 1.24, ease: "power3.inOut" }, 2.64)
+    .to(r.invite, { scale: 1.005, duration: 0.26, ease: "power2.out" }, 3.84)
+    .to(r.invite, { scale: 1, duration: 0.28, ease: "power2.inOut" }, 4.1)
+    .to([r.pocket, r.back, r.seams, r.liner], { autoAlpha: 0, duration: 0.55, ease: "power1.out" }, 3.1)
+    .addLabel("settled", 4.4)
+    .to({}, { duration: 0.12 });
 
   return tl;
 }
 
-/** Instant, motion-free path used for skipped openings and reduced-motion visitors. */
-export function settleInstantly({ fade = 0.35 } = {}) {
+/** Jump to the finished invitation (reduced motion, skipped, or seen before). */
+export function settleInstantly() {
   const r = refs();
-
-  gsap.set(r.envFloat, { autoAlpha: 0, pointerEvents: "none" });
-  gsap.set(r.invite, {
-    opacity: 1,
-    yPercent: 0,
-    scale: 1,
-    clipPath: "inset(0% 0% 0% 0%)",
-    filter: "none",
-    pointerEvents: "auto",
+  if (!r.envelope) return;
+  gsap.set(r.frame, { clipPath: "none", zIndex: 13 });
+  gsap.set(r.invite, { autoAlpha: 1, scale: 1, yPercent: 0, rotate: 0 });
+  gsap.set([r.pocket, r.back, r.seams, r.liner, r.flap, r.tie, r.trigger], {
+    autoAlpha: 0,
+    pointerEvents: "none",
   });
-  gsap.set(r.frame, { opacity: 1 });
-  gsap.set(r.bloom, { opacity: 0 });
-  gsap.set([r.corners, r.sprigs, r.content], { clearProps: "opacity,transform" });
-
-  if (fade > 0) {
-    gsap.fromTo(r.invite, { opacity: 0 }, { opacity: 1, duration: fade, ease: "power2.out" });
-  }
+  gsap.set([r.hint, r.skip], { autoAlpha: 0, pointerEvents: "none" });
 }

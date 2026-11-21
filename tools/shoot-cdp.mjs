@@ -40,6 +40,8 @@ const nl = (s) => String(s).replace(/\s+/g, " ").trim();
 const argv = process.argv.slice(2);
 const flag = (name) => argv.includes(name);
 const val = (name, fallback) => {
+  const inline = argv.find((arg) => arg.startsWith(`${name}=`));
+  if (inline) return inline.slice(name.length + 1);
   const i = argv.indexOf(name);
   if (i === -1) return fallback;
   const next = argv[i + 1];
@@ -64,6 +66,7 @@ const PROBE = flag("--probe");
 const FINAL = flag("--final");
 const SEQ = flag("--seq") ? String(val("--seq", "")).split(",").map(Number) : null;
 const WALK = flag("--walk");
+const SCROLL_TO = val("--scroll-to", null);
 const DUR = num("--dur", 8000);
 const STEP = num("--step", 400);
 const WAIT = num("--wait", 7000);
@@ -276,7 +279,7 @@ if (WALK) {
 } else if (SEQ) {
   for (const t of SEQ) {
     const tl = await evaluate(
-      `(() => { const tl = window.__introTl; if (!tl) return null; tl.pause(${Number(t)}); return { d: tl.duration(), p: +tl.progress().toFixed(3) }; })()`,
+      `(() => { const tl = window.__introTl; if (!tl) return null; tl.pause(${Number(t) / 1000}); return { d: tl.duration(), p: +tl.progress().toFixed(3) }; })()`,
       sessionId
     );
     await new Promise((r) => setTimeout(r, 180));
@@ -296,6 +299,11 @@ if (WALK) {
   }
   await wheelTest(sessionId);
   console.log("SHOTS", shots.join(" | "));
+} else if (SCROLL_TO) {
+  await evaluate(`(() => { const el = document.querySelector(${JSON.stringify(String(SCROLL_TO))}); if (!el) return false; el.scrollIntoView({ behavior: "instant", block: "start" }); return true; })()`, sessionId);
+  await new Promise((r) => setTimeout(r, 800));
+  console.log("SECTION", SCROLL_TO, JSON.stringify(await evaluate("({ y: Math.round(window.scrollY), overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth })", sessionId)));
+  console.log("WROTE", await capture(OUT, sessionId));
 } else if (FINAL) {
   await new Promise((r) => setTimeout(r, WAIT));
   console.log("FINAL DOM:", JSON.stringify(await evaluate(SAMPLE, sessionId)));

@@ -1,99 +1,38 @@
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import gsap from "gsap/dist/gsap.js";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/** Scroll-linked reveals and gentle depth. Deliberately restrained. */
+/** Calm reveals and a small amount of artwork depth for the long-form story. */
 export function initScroll({ reduceMotion = false } = {}) {
   const items = document.querySelectorAll("main [data-reveal]");
-
   if (reduceMotion) {
     items.forEach((el) => {
       el.style.opacity = "1";
       el.style.transform = "none";
     });
-    return { refresh: () => ScrollTrigger.refresh() };
+    return { refresh: () => ScrollTrigger.refresh(), destroy() {} };
   }
 
   const ctx = gsap.context(() => {
     items.forEach((el) => {
-      gsap.fromTo(
-        el,
-        { opacity: 0, y: 26 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.95,
-          ease: "power2.out",
-          scrollTrigger: { trigger: el, start: "top 88%", once: true },
-        }
-      );
-    });
-
-    // soft parallax on the corner florals
-    gsap.utils.toArray(".section-bouquet").forEach((el) => {
-      gsap.to(el, {
-        y: -26,
-        ease: "none",
-        scrollTrigger: {
-          trigger: el.closest(".section"),
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 0.8,
-        },
+      gsap.fromTo(el, { autoAlpha: 0, y: 20 }, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: { trigger: el, start: "top 88%", once: true },
       });
     });
 
-    // venue illustration settles as it enters
-    const venueArt = document.querySelector(".venue-art > svg");
-    if (venueArt) {
-      gsap.fromTo(
-        venueArt,
-        { scale: 1.05 },
-        {
-          scale: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".venue-art",
-            start: "top bottom",
-            end: "top 40%",
-            scrub: 0.6,
-          },
-        }
-      );
-    }
-
-    // the painted garden drifts gently behind the closing words
-    const closingArt = document.querySelector(".closing__art > svg");
-    if (closingArt) {
-      gsap.fromTo(
-        closingArt,
-        { y: -18 },
-        {
-          y: 22,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".section--closing",
-            start: "top bottom",
-            end: "bottom bottom",
-            scrub: 1,
-          },
-        }
-      );
-    }
-
-    // the page-edge greenery breathes a little as the page scrolls
-    gsap.utils.toArray(".page-ambient .amb").forEach((el, i) => {
+    gsap.utils.toArray(".story__sprig, .details__lemon, .venue__tree").forEach((el) => {
       gsap.to(el, {
-        y: i ? 34 : -34,
+        y: -12,
         ease: "none",
-        scrollTrigger: { start: 0, end: "max", scrub: 1.2 },
+        scrollTrigger: { trigger: el.closest(".section"), start: "top bottom", end: "bottom top", scrub: 1.2 },
       });
     });
   });
 
-  return {
-    refresh: () => ScrollTrigger.refresh(),
-    destroy: () => ctx.revert(),
-  };
+  return { refresh: () => ScrollTrigger.refresh(), destroy: () => ctx.revert() };
 }
