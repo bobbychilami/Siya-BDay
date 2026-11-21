@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - experiment/italian-coast-birthday
   workflow_dispatch:
 
 permissions:
